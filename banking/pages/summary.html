@@ -1,0 +1,53 @@
+<div class="texto-superior">
+	<p class="pull-left">Welcome <b>Mr. Sr.</b></p>
+	<p class="pull-right">Last visit: <b id="last-activity">16151s</b></p>
+</div>
+<p>Note that the balances shown do nbot take into account any <a href="#">Pending Payments</a></s></p>
+<table class="table-banking">
+	<thead>
+		<tr>
+			<th>Account Name / Number</th>
+			<th>Balance</th>
+			<th>Overdraft</th>
+			<th>Avaliable balance</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>ABC/123</td>
+			<td>$ 1,135.78</td>
+			<td>$ 200.78</td>
+			<td>$ 2,000.78</td>
+		</tr>
+		<tr>
+			<td>ABC/123</td>
+			<td>$ 1,135.78</td>
+			<td>$ 200.78</td>
+			<td>$ 2,000.78</td>
+		</tr>
+	</tbody>
+	<tfoot>
+		<tr>
+			<td></td>
+			<td>$ 1,135.78</td>
+			<td>$ 200.78</td>
+			<td>$ 2,000.78</td>
+		</tr>
+	</tfoot>
+</table>
+<div class="baixo">
+	<button type="button" class="boton">
+		Add / Remove Accounts
+	</button>
+	<button type="button" class="boton">
+		Print
+	</button>
+</div>
+<div class="ofertas">
+	<img src="" class="offer1">
+	<img src="" class="offer2">
+</div>
+<script>
+	$("#PageState").html('Your Summary');
+	$('#last-activity').html(new Date().toDateString());
+</script>

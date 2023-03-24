@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato">
+	<link rel="stylesheet" href="css/main.css">
+	<title>Habank - o melhor banco virtual</title>
+</head>
+<body>
+	<header>
+		<h1 class="topo">Habank</h1>
+		<ul class="help">
+			<li ><a href="#"class="linkDoHeader">Help</a> | <a href="index.html" class="linkDoHeader2">Log Out</a></li>
+		</ul>
+	</header>
+	<aside class="logo">
+		<img src="sideMenuPages/Brand 1 TRADE NETWORK.png" alt="logomarca" height="120px">
+	</aside>
+	<aside class="menuLateral">
+		<div class="youraccounts">
+			<h3>Your Accounts</h3>
+			<ul>
+				<li><a href="javascript:void(0);" content-load="summary" class="ml">Your Sumary</a></li>
+				<li><a href="javascript:void(0);" content-load="your_statement" class="ml">Your Statement</a></li>
+				<li><a href="javascript:void(0);" content-load="move_money" class="ml">Move Money</a></li>
+			</ul>
+			
+		</div>
+		<div class="managepayments">
+			<h3>Manage Payments</h3>
+			<ul>
+				<li><a href="PaymentsTransfer.html" class="ml">Payments / Transfer</a></li>
+				<li><a href="javascript:void(0);" content-load="your_payees" class="ml">Your Payees</a></li>
+				<li><a href="javascript:void(0);" content-load="standing_orders" class="ml">Standing Orders</a></li>
+				<li><a href="javascript:void(0);" content-load="direct_debits" class="ml">Direct Debits</a></li>
+				<li><a href="javascript:void(0);" content-load="pending_payments" class="ml">Pending Payments</a></li>
+			</ul>
+			
+		</div>
+		<div class="manageaccounts">
+			<h3>Manage Accounts</h3>
+			<ul>
+				<li><a href="javascript:void(0);"  content-load="other_services" class="ml">Other Services</a></li>
+			</ul>
+		</div>
+	</aside>
+	<section class="conteudo-total">
+		<div class="logdata">
+			<h2 class="log" id="PageState">Home</h2>
+			<ul class="data">
+				<li><h2 id="DataAtual"></h2></li>
+			</ul>   
+		</div>
+		<div>
+			<hr>
+		</div>
+		<div id="DivConteudo">
+			
+			
+			
+		</div>
+	</section>
+	<footer>
+		<p><a href="#" class="linkDoFooter">Security</a> | <a href="" class="linkDoFooter">Accessibility</a> | <a href="" class="linkDoFooter">Terms And Conditions</a></p>
+	</footer>
+	<script src="plugins/jquery/jquery-3.6.4.min.js"></script>
+	<script src="plugins/pageload/pageload.js"></script>
+	<script>
+		$(()=>{
+			let data = new Date();
+			$('#DataAtual').html(data.toLocaleDateString());
+			pageload('home');
+		});
+	</script>
+</body>
+</html>

@@ -1,0 +1,256 @@
+body {
+	display: grid;
+	grid-template-columns: 25% 75%;
+	grid-template-rows: 70px 545px 42px;
+	margin: 0;
+}
+header {
+	grid-area: 1/2/2/3;
+	background-color: #216651;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-around;
+	align-items: center;
+}
+.topo {
+	color: rgb(255, 255, 255);
+	padding-right: 500px;
+	text-shadow: 6px 4px 4px #000000;
+}
+.help {
+	list-style-type: none;
+	color: white;
+	text-shadow: 6px 4px 4px #000000;
+	
+}
+
+.section-login{
+	grid-area: 2/2/3/3;
+	background-color: rgba(255, 255, 255, 0.575);
+	display: block;
+	align-items: center;
+	justify-content: center;
+	padding: 3rem;
+}
+a.linkDoHeader:link {
+	text-decoration: none;
+	color: white;
+}
+
+a.linkDoHeader:visited {
+	text-decoration: none;
+	color: white;
+}
+
+a.linkDoHeader:hover {
+	text-decoration: none;
+	text-shadow: 1px 1px 8px rgb(82, 248, 110), 0 0 25px rgba(17, 247, 82, 0.575), 0 0 5px rgb(23, 139, 0);
+}
+
+a.linkDoHeader:active {
+	text-decoration: none;
+	color: rgb(0, 0, 0);
+}
+
+.linkDoHeader2 {
+	list-style-type: none;
+	color: white;
+	text-shadow: 6px 4px 4px #000000;
+}
+
+a.linkDoHeader2:link {
+	text-decoration: none;
+	color: white;
+}
+
+a.linkDoHeader2:visited {
+	text-decoration: none;
+	color: white;
+}
+
+a.linkDoHeader2:hover {
+	text-decoration: none;
+	text-shadow: 1px 1px 8px rgb(82, 248, 110), 0 0 25px rgba(17, 247, 82, 0.575), 0 0 5px rgb(23, 139, 0);
+}
+
+a.linkDoHeader2:active {
+	text-decoration: none;
+	color: rgb(0, 0, 0);
+}
+
+
+.logo {
+	grid-area: 1/1/2/2;
+	background-color: rgba(224, 235, 227, 0.575);
+	display: grid;
+	align-items: center;
+	justify-content: center;
+	padding-top: 15px;
+}
+img {
+	box-shadow: 5px 10px 2 px black;
+}
+aside {
+	grid-area: 2/1/3/2;
+	background-color:rgba(224, 235, 227, 0.575);
+}
+
+.menuLateral {
+	padding-left: 30px;
+	padding-top: 35px;
+	color: #206450;
+}
+
+ul {
+	list-style: none;
+	
+}
+
+.ml {
+	text-decoration: none;
+	color: #216651;
+}
+
+.data {
+	list-style-type: none;
+}
+.logdata {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	height: 50px;
+	width: 666.53px
+}
+
+hr {
+	border: 0;
+	border-top: 2px solid rgba(7, 172, 53, 0.575);
+}
+
+.sec2 {
+	height: 474px;
+	background-color: #e75252;
+}
+
+footer {
+	grid-area: 3/1/4/3;
+	background-color: #216651;
+	color: white;
+	display: grid;
+	align-items: center;
+	justify-content: center;
+	text-shadow: 6px 4px 4px #000000;
+}
+a.linkDoFooter:link {
+	text-decoration: none;
+	color: white;
+}
+
+a.linkDoFooter:visited {
+	text-decoration: none;
+	color: white;
+}
+
+a.linkDoFooter:hover {
+	text-decoration: none;
+	text-shadow: 1px 1px 8px rgb(82, 248, 110), 0 0 25px rgba(17, 247, 82, 0.575), 0 0 5px rgb(23, 139, 0);
+}
+
+a.linkDoFooter:active {
+	text-decoration: none;
+	color: rgb(0, 0, 0);
+}
+/* alterações daniel daqui pra baixo*/
+body {
+	font-family: 'Lato', serif;
+}
+footer{
+	position: fixed;
+	bottom: 0px;
+	width: 100%;
+}
+.asidelogo{
+	align-items: flex-start;
+	height: 100vw;
+}
+.menuLateral{
+	height: calc(100vh - 105px);
+}
+.logdata{
+	grid-area: 2/2/3/3;
+	background-color: rgba(255, 255, 255, 0.575);
+	display: inline-flex;
+	width: 100%;
+}
+.conteudo-total{
+	padding: 3rem;
+}
+.texto-superior{
+	width: 100%;
+	display: flow-root;
+}
+.pull-left{
+	float: left;
+}
+.pull-right{
+	float: right;
+}
+.table-banking{
+	width: 100%;
+	text-align: left;
+}
+.table-banking>thead>tr>th{
+	padding: 3px;
+}
+.table-banking>tbody>tr>td{
+	padding: 3px;
+}
+.table-banking>thead{
+	background: #206450;
+	color: white;
+}
+.table-banking>tbody{
+	background: #e1f0ff;
+}
+.table-banking>tfoot>tr>td{
+	border-top: 3px solid #206450;
+	background: #e1f0ff;
+}
+.baixo{
+	text-align: right;
+	margin-top: 1rem;
+}
+.boton {
+	border-radius: 10px;
+	padding: 1px 15px;
+	border: 2px solid #4CAF50;
+	background-color: #90f0a0;
+	box-shadow: 0 2px 4px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+}
+.ofertas{
+	margin-top: 3rem;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-around;
+	align-items: center;
+}
+.offer1,.offer2{
+	width: 90%;
+	height: 200px;
+}
+.w50{
+	width: 50%;
+}
+.content-other-services{
+	display: flex;
+}
+.link-other{
+	color:#4CAF50;
+}
+.title-other{
+	color: #206450;
+}
+#DivConteudo{
+	max-height: 75vh;
+	overflow: auto;
+}

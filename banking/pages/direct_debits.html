@@ -1,0 +1,47 @@
+<p>
+    If you wigh to view or delete a Direct Debit then select it from the list below. You must
+allow at least 2 working days for deletions to take effect.
+</p>
+<table class="table-banking">
+    <tbody>
+        <tr>
+            <td><b>Current Account: ABC/123</b></td>
+            <td>&#x1F6C8; Avaliable balance: $ 2,350.75</td>
+        </tr>
+    </tbody>
+</table>
+<br>
+<table class="table-banking">
+    <thead>
+        <tr>
+            <th>Payee</th>
+            <th>Reference</th>
+            <th>Last Payment Amount</th>
+            <th>Last Payd</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><a href="#"  onclick="pageload('your_payees_view');">Electricity Company</a></td>
+            <td>E-SDSD-54</td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><a href="#" onclick="pageload('your_payees_view');">Gas Company</a></td>
+            <td>F-SDSD-7989778</td>
+            <td>$ 42.98</td>
+            <td>11 october 2001</td>
+        </tr>
+        <tr>
+            <td><a href="#" onclick="pageload('your_payees_view');">Some Person</a></td>
+            <td>gg-sds-8787</td>
+            <td></td>
+            <td></td>
+        </tr>
+    </tbody>
+</table>
+<script>
+	$("#PageState").html('Direct Debits');
+	$('#last-activity').html(new Date().toDateString());
+</script>

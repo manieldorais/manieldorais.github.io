@@ -1,0 +1,54 @@
+<p>
+    If you wish to view. amend or delete payee details for a company or person that you
+have paid before then select them from the list below
+</p>
+<p>
+    You can also view any regular payments by selecting <a href="#">Standing Orders</a> or <a href="#">Direct Debits</a>.
+</p>
+<table class="table-banking">
+    <tbody>
+        <tr>
+            <td><b>Current Account: ABC/123</b></td>
+            <td>&#x1F6C8; Avaliable balance: $ 2,350.75</td>
+        </tr>
+    </tbody>
+</table>
+<br>
+<table class="table-banking">
+    <thead>
+        <tr>
+            <th>Payee</th>
+            <th>Reference</th>
+            <th>Next payment Amount</th>
+            <th>Next Payment Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><a href="#"  onclick="pageload('your_payees_view');">Electricity Company</a></td>
+            <td>E-SDSD-54</td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><a href="#" onclick="pageload('your_payees_view');">Gas Company</a></td>
+            <td>F-SDSD-7989778</td>
+            <td>$ 42.98</td>
+            <td>11 october 2001</td>
+        </tr>
+        <tr>
+            <td><a href="#" onclick="pageload('your_payees_view');">Some Person</a></td>
+            <td>gg-sds-8787</td>
+            <td></td>
+            <td></td>
+        </tr>
+    </tbody>
+</table>
+<div class="baixo">
+	<button type="button" class="boton">
+		Create New Standing Order
+	</button>
+</div>
+<script>
+    $("#PageState").html('Standing Orders');
+</script>

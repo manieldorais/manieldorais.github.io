@@ -1,0 +1,57 @@
+<p>
+    Your selected payee details are shown below. Select "Arnend" to Change these details.
+Select "Delete" if you no longer need them for further payments.
+</p>
+<table class="table-banking">
+    <tbody>
+        <tr>
+            <td><b>Current Account: ABC/123</b></td>
+            <td>&#x1F6C8; Avaliable balance: $ 2,350.75</td>
+        </tr>
+    </tbody>
+</table>
+<br>
+<table class="table-banking">
+    <thead>
+        <tr>
+            <th>Payment Details</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><b>Payee name:</b></td>
+            <td>Something</td>
+        </tr>
+        <tr>
+            <td><b>Account Number:</b></td>
+            <td>123456</td>
+        </tr>
+        <tr>
+            <td><b>Payee name:</b></td>
+            <td>Something</td>
+        </tr>
+        <tr>
+            <td><b>Sort Code:</b></td>
+            <td>50-48-3415</td>
+        </tr>
+        <tr>
+            <td><b>Customer Reference:</b></td>
+            <td>-</td>
+        </tr>
+    </tbody>
+</table>
+<div class="baixo">
+    <button type="button" class="boton" onclick="pageload('your_payees');">
+		Previous
+	</button>
+	<button type="button" class="boton" onclick="pageload('your_payees');">
+		Amend
+	</button>
+    <button type="button" class="boton" onclick="pageload('your_payees');">
+		Delete
+	</button>
+</div>
+<script>
+    $("#PageState").html('You Payees - View');
+</script>

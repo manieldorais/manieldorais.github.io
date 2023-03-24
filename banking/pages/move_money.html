@@ -1,0 +1,42 @@
+<p>
+    Moving money between your accounts is instantaneous and will be reflected in your
+    account balances immediately.
+</p>
+<table class="table-banking">
+    <thead>
+        <tr>
+            <th>Avaliable Accounts</th>
+            <th>Balance</th>
+            <th>From</th>
+            <th>To</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Current Account ABC/123</td>
+            <td>$ 1,135.78</td>
+            <td><input type="radio" name="1"></td>
+            <td><input type="radio" name="1"></td>
+        </tr>
+        <tr>
+            <td>Savings Account ABC/123</td>
+            <td>$ 1,135.78</td>
+            <td><input type="radio" name="2"></td>
+            <td><input type="radio" name="2"></td>
+        </tr>
+    </tbody>
+    <tfoot>
+        <tr>
+            <td>Amount to move, e.g. 150.76</td>
+            <td colspan="3">$ <input type="text"></td>
+        </tr>
+    </tfoot>
+</table>
+<div class="baixo">
+	<button type="button" class="boton">
+		Submit
+	</button>
+</div>
+<script>
+    $("#PageState").html('Move Money');
+</script>

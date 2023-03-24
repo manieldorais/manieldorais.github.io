@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato">
+	<link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="css/main.css">
+	<title>Habank - o melhor banco virtual</title>
+</head>
+<body>
+	
+	<header>
+		
+		<h1 class="topo">Habank</h1>
+		<ul class="help">
+			<li ><a href="#"class="linkDoHeader">Help</a></li>
+		</ul>
+	</header>
+	
+	<aside class="logo asidelogo">
+		<img src="imagens/Brand 1 TRADE NETWORK®.png" alt="logomarca" height="120px">
+	</aside>
+	<section class="section-login">
+		<div class="logdata">
+			<h2 class="log">
+				log In
+			</h2>
+			<ul class="data">
+				<li><h2 id="DataAtual"></h2></li>
+			</ul>   
+		</div>
+		<div>
+			<hr>
+		</div>
+		
+		<p class="paragrafo"  >Please enter your user name, password and security answer in the boxes below.</p>
+		<p class="paragrafo"><a href="#" class="ls">Click here if you forgotten your security details</a></p>
+		
+		<form action="javascript:void(0);">
+			<div class="conjuntosDoForm">
+				<div class="cunjunto1">
+					<label for="usuario" class="username">User Name</label>
+					<input type="text" id="usuario" name="fname" value=""> 
+				</div>
+				
+				<div class="conjunto2">
+					<label for="senha">Password</label>
+					<input type="password" id="senha" name="lname" value="">
+				</div>
+				
+				<div class="conjunto3">
+					<label for="respostamemoravel">Memorable answer</label>
+					<input type="text" id="respostamemoravel" name="lname" value="">
+				</div>
+				
+				<br>
+				
+			</div>
+			<div class="botao">
+				<input type="submit" value="Submit" class="boton" onclick="location.href='home.html';"  >
+				<input type="submit" value="Clear" class="boton" >
+				
+			</div>
+		</form>
+		<div>
+			<hr>
+		</div>
+		<h1 style="margin: 2px;" >Latest News</h1>
+		<p >Lorem ipsum dolor, sit amet consectetur adipisicing elit. Laudantium vitae in, a cumque<br/> quia nostrum  ullam quidem voluptatem, sequi et accusamus nam similique rerum.</p>
+		<p >
+			Lorem ipsum dolor sit amet consectetur adipisicing elit. In voluptate quia, nobis natus expedita ducimus<br/> amet soluta fugiat enim veritatis perspiciatis commodi sapiente<br/> autem quidem eius et, doloremque voluptates velit alias.<br/> Sit eum alias ratione hic illo.<br/> Beatae similique alias consectetur tempora eveniet repudiandae aliquam?
+		</p>
+		
+	</section>
+	
+	<footer>
+		<p><a href="#" class="linkDoFooter">Security</a> | <a href="" class="linkDoFooter">Accessibility</a> | <a href="" class="linkDoFooter">Terms And Conditions</a></p>
+	</footer>
+	<script src="plugins/jquery/jquery-3.6.4.min.js"></script>
+	<script>
+		$(()=>{
+			let data = new Date();
+			$('#DataAtual').html(data.toLocaleDateString());
+		});
+	</script>
+</body>
+</html>
