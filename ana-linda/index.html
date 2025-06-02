@@ -12,7 +12,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            min-height: fit-content; /* Ocupa a altura total da viewport */
+            min-height: 100vh; /* Ocupa a altura total da viewport */
             margin: 0;
             background-color: #f8e3e3; /* Um tom pastel suave para o fundo */
             color: #333; /* Cor do texto padrão */
@@ -44,13 +44,13 @@
             border-radius: 15px; /* Cantos arredondados para as imagens */
             flex-shrink: 0; /* Impede que as imagens encolham */
             object-fit: cover; /* Garante que a imagem preencha o espaço sem distorcer */
-            height: 50%; /* Altura fixa para as imagens */
+            height: 400px; /* Altura fixa para as imagens */
             /* Responsividade da altura para telas menores */
             @media (max-width: 768px) {
-                height: 50%;
+                height: 300px;
             }
             @media (max-width: 480px) {
-                height: 50%;
+                height: 250px;
             }
         }
 
