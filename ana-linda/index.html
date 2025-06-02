@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>anidaniel</title>
+    <style>
+        /* Estilos globais para o corpo da página */
+        body {
+            font-family: 'Inter', sans-serif; /* Usando a fonte Inter */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; /* Ocupa a altura total da viewport */
+            margin: 0;
+            background-color: #f8e3e3; /* Um tom pastel suave para o fundo */
+            color: #333; /* Cor do texto padrão */
+            overflow-x: hidden; /* Evita rolagem horizontal */
+        }
+
+        /* Contêiner principal do slider */
+        .slider-container {
+            position: relative;
+            width: 90%; /* Largura responsiva */
+            max-width: 700px; /* Largura máxima para desktops */
+            overflow: hidden; /* Esconde as imagens que estão fora da vista */
+            border-radius: 15px; /* Cantos arredondados */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15); /* Sombra suave */
+            background-color: #fff; /* Fundo branco para o contêiner */
+            margin-bottom: 30px; /* Espaço abaixo do slider */
+        }
+
+        /* Contêiner das imagens dentro do slider */
+        .slider-images {
+            display: flex; /* Permite que as imagens se alinhem lado a lado */
+            transition: transform 0.5s ease-in-out; /* Transição suave para o movimento do slider */
+        }
+
+        /* Estilos para cada imagem dentro do slider */
+        .slider-images img {
+            width: 100%; /* Ocupa 100% da largura do contêiner visível */
+            display: block;
+            border-radius: 15px; /* Cantos arredondados para as imagens */
+            flex-shrink: 0; /* Impede que as imagens encolham */
+            object-fit: cover; /* Garante que a imagem preencha o espaço sem distorcer */
+            height: 400px; /* Altura fixa para as imagens */
+            /* Responsividade da altura para telas menores */
+            @media (max-width: 768px) {
+                height: 300px;
+            }
+            @media (max-width: 480px) {
+                height: 250px;
+            }
+        }
+
+        /* Estilos para os botões de navegação (anterior/próximo) */
+        .slider-button {
+            position: absolute;
+            top: 50%; /* Centraliza verticalmente */
+            transform: translateY(-50%); /* Ajuste fino para centralização vertical */
+            background-color: rgba(0, 0, 0, 0.5); /* Fundo semi-transparente */
+            color: white; /* Cor do ícone/texto */
+            border: none;
+            padding: 12px 18px;
+            cursor: pointer;
+            border-radius: 50%; /* Botões circulares */
+            font-size: 24px;
+            z-index: 10; /* Garante que os botões fiquem acima das imagens */
+            transition: background-color 0.3s ease; /* Transição suave ao passar o mouse */
+        }
+
+        .slider-button:hover {
+            background-color: rgba(0, 0, 0, 0.7); /* Fundo mais escuro ao passar o mouse */
+        }
+
+        /* Posição do botão "anterior" */
+        .prev {
+            left: 15px;
+        }
+
+        /* Posição do botão "próximo" */
+        .next {
+            right: 15px;
+        }
+
+        /* Estilos para a exibição da frase romântica */
+        .quote-display {
+            margin-top: 30px;
+            text-align: center;
+            font-style: italic;
+            font-size: 1.4em;
+            color: #6a0572; /* Um tom de roxo mais profundo */
+            max-width: 700px;
+            padding: 0 20px;
+            line-height: 1.5;
+            transition: opacity 0.5s ease-in-out; /* Transição suave para o fade da frase */
+            min-height: 80px; /* Altura mínima para evitar que o layout "pule" */
+            display: flex; /* Usa flexbox para centralizar o texto verticalmente */
+            align-items: center;
+            justify-content: center;
+            /* Responsividade da fonte para telas menores */
+            @media (max-width: 768px) {
+                font-size: 1.2em;
+            }
+            @media (max-width: 480px) {
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="slider-container">
+        <div class="slider-images">
+            </div>
+
+        <button class="slider-button prev" onclick="prevSlide()">&#10094;</button>
+        <button class="slider-button next" onclick="nextSlide()">&#10095;</button>
+    </div>
+
+    <div class="quote-display" id="quoteDisplay"></div>
+
+    <script>
+        // Seleciona o elemento que contém as imagens do slider
+        const sliderImages = document.querySelector('.slider-images');
+        // Seleciona o elemento onde a frase romântica será exibida
+        const quoteDisplay = document.getElementById('quoteDisplay');
+        // Variável para controlar o índice da imagem atual
+        let currentIndex = 0;
+
+        // Array de URLs das imagens. Você pode substituir estas URLs pelas suas próprias fotos!
+        const images = [
+            'fotos/1.HEIC',
+            'fotos/2.jpg',
+            'fotos/3.HEIC',
+            'fotos/4.jpg',
+            'fotos/5.jpg',
+            'fotos/6.HEIC',
+            'fotos/7.HEIC',
+            'fotos/8.HEIC',
+            'fotos/9.jpg',
+            'fotos/10.webp',
+        ];
+
+        // Array de frases românticas. Sinta-se à vontade para adicionar ou modificar!
+        const quotes = [
+            "Você é a melodia que embala meu coração.",
+            "Cada momento ao seu lado é um sonho realizado.",
+            "Meu amor por você cresce a cada novo amanhecer.",
+            "Com você, a vida é mais colorida e cheia de poesia.",
+            "Nossos corações dançam no mesmo ritmo, para sempre.",
+            "Onde quer que eu esteja, seu amor é meu norte.",
+            "Você é a estrela que guia meus dias e ilumina minhas noites.",
+            "Amar você é a coisa mais linda que já me aconteceu.",
+            "Seu sorriso é o meu raio de sol.",
+            "Juntos, somos mais fortes e felizes."
+        ];
+
+        // Função para carregar as imagens no slider dinamicamente
+        function loadImages() {
+            sliderImages.innerHTML = ''; // Limpa qualquer conteúdo existente
+            images.forEach(src => {
+                const img = document.createElement('img'); // Cria um novo elemento <img>
+                img.src = src; // Define o atributo src da imagem
+                // Adiciona um fallback para caso a imagem não carregue
+                img.onerror = () => {
+                    img.src = `fotos/10.webp`; // Define uma imagem padrão caso a original falhe
+                };
+                sliderImages.appendChild(img); // Adiciona a imagem ao contêiner do slider
+            });
+        }
+
+        // Função para mostrar a frase correspondente à imagem atual
+        function showQuote(index) {
+            quoteDisplay.style.opacity = 0; // Esconde a frase atual com um fade out
+            setTimeout(() => {
+                // Garante que a frase exista, usando o operador de módulo para ciclar
+                quoteDisplay.textContent = quotes[index % quotes.length];
+                quoteDisplay.style.opacity = 1; // Mostra a nova frase com um fade in
+            }, 500); // O tempo (500ms) deve ser igual à transição de opacidade no CSS
+        }
+
+        // Função para atualizar a posição do slider e a frase exibida
+        function updateSlider() {
+            // Calcula a largura de uma única imagem para mover o slider
+            // Acessa o primeiro filho do sliderImages para obter a largura
+            const imageWidth = sliderImages.children[0] ? sliderImages.children[0].clientWidth : 0;
+            // Move o contêiner de imagens horizontalmente
+            sliderImages.style.transform = `translateX(${-currentIndex * imageWidth}px)`;
+            // Exibe a frase correspondente à imagem atual
+            showQuote(currentIndex);
+        }
+
+        // Função para avançar para o próximo slide
+        function nextSlide() {
+            // Incrementa o índice, voltando ao início se chegar ao final
+            currentIndex = (currentIndex + 1) % images.length;
+            updateSlider(); // Atualiza o slider
+        }
+
+        // Função para retroceder para o slide anterior
+        function prevSlide() {
+            // Decrementa o índice, voltando ao final se estiver no início
+            currentIndex = (currentIndex - 1 + images.length) % images.length;
+            updateSlider(); // Atualiza o slider
+        }
+
+        // Evento que é disparado quando a página HTML e todos os recursos são carregados
+        window.onload = () => {
+            loadImages(); // Carrega as imagens dinamicamente no slider
+            updateSlider(); // Inicializa o slider e a primeira frase
+        };
+
+        // Evento que é disparado quando a janela do navegador é redimensionada
+        window.onresize = updateSlider; // Garante que o slider se ajuste ao novo tamanho da janela
+
+        // Opcional: Adiciona navegação automática a cada X segundos
+        // Esta linha faz o slider avançar automaticamente a cada 5 segundos (5000 milissegundos)
+        // Se você não quiser navegação automática, pode remover a linha abaixo.
+        setInterval(nextSlide, 5000);
+    </script>
+</body>
+</html>
