@@ -128,19 +128,19 @@
         const quoteDisplay = document.getElementById('quoteDisplay');
         // Variável para controlar o índice da imagem atual
         let currentIndex = 0;
-
+        let cache_v = '1.0'; // Versão do cache, para controle de atualizações
         // Array de URLs das imagens. Você pode substituir estas URLs pelas suas próprias fotos!
         const images = [
-            'fotos/1.png',
-            'fotos/2.jpg',
-            'fotos/3.png',
-            'fotos/4.jpg',
-            'fotos/5.jpg',
-            'fotos/6.png',
-            'fotos/7.png',
-            'fotos/8.png',
-            'fotos/9.jpg',
-            'fotos/10.webp',
+            'fotos/1.png?v=' + cache_v, // Adiciona a versão do cache para evitar problemas de cache
+            'fotos/2.jpg?v=' + cache_v,
+            'fotos/3.png?v=' + cache_v,
+            'fotos/4.jpg?v=' + cache_v,
+            'fotos/5.jpg?v=' + cache_v,
+            'fotos/6.png?v=' + cache_v,
+            'fotos/7.png?v=' + cache_v,
+            'fotos/8.png?v=' + cache_v,
+            'fotos/9.jpg?v=' + cache_v,
+            'fotos/10.webp?v=' + cache_v,
         ];
 
         // Array de frases românticas. Sinta-se à vontade para adicionar ou modificar!
