@@ -1,0 +1,289 @@
+/* Variáveis para cores */
+:root {
+    --primary-color: #FF69B4; /* Rosa choque */
+    --secondary-color: #FFB6C1; /* Rosa claro */
+    --text-color: #333;
+    --white-text: #fff;
+    --background-light: #F0F2F5;
+    --card-background: #FFFFFF;
+    --shadow-light: rgba(0, 0, 0, 0.1);
+    --shadow-medium: rgba(0, 0, 0, 0.2);
+}
+
+/* Reset básico e tipografia */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--background-light);
+    color: var(--text-color);
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    align-items: center;
+    padding: 1rem;
+    overflow-x: hidden; /* Evita scroll horizontal indesejado */
+}
+
+h1, h2 {
+    font-family: 'Pacifico', cursive;
+    color: var(--primary-color);
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+h2 {
+    font-size: 1.8rem;
+    color: var(--primary-color);
+}
+
+p {
+    font-size: 1rem;
+    color: var(--text-color);
+}
+
+/* Header */
+.header {
+    width: 100%;
+    padding: 1.5rem 0;
+    background-color: var(--card-background);
+    box-shadow: 0 4px 8px var(--shadow-light);
+    margin-bottom: 2rem;
+    border-radius: 15px;
+    max-width: 600px; /* Limita a largura do header */
+}
+
+.header h1 {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    text-shadow: 1px 1px 2px var(--secondary-color);
+}
+
+/* Container das histórias */
+.stories-container {
+    position: relative;
+    width: 100%;
+    max-width: 400px; /* Largura máxima para cada "story" */
+    height: 650px; /* Altura fixa para o container das histórias */
+    overflow: hidden; /* Esconde as histórias que não estão ativas */
+    border-radius: 20px;
+    box-shadow: 0 10px 20px var(--shadow-medium);
+    background-color: var(--card-background);
+}
+
+/* Cartão da história individual */
+.story-card {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--card-background);
+    border-radius: 20px;
+    padding-bottom: 1rem; /* Espaço para a navegação */
+    opacity: 0;
+    transform: translateX(100%); /* Começa fora da tela à direita */
+    transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out; /* Transição suave */
+    will-change: transform, opacity; /* Otimização de performance */
+}
+
+.story-card.active {
+    opacity: 1;
+    transform: translateX(0); /* Entra na tela */
+    z-index: 1; /* Garante que o ativo esteja por cima */
+}
+
+/* Efeito de saída */
+.story-card.prev {
+    transform: translateX(-100%); /* Sai pela esquerda */
+    opacity: 0;
+}
+
+/* Imagem da história */
+.story-image {
+    width: 100%;
+    height: 70%; /* Ocupa 70% da altura do card */
+    object-fit: cover; /* Garante que a imagem preencha o espaço sem distorcer */
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    filter: brightness(0.9); /* Escurece um pouco a imagem para o texto se destacar */
+}
+
+/* Conteúdo do texto da história */
+.story-content {
+    padding: 1rem;
+    text-align: center;
+    flex-grow: 1; /* Ocupa o espaço restante */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.story-content h2 {
+    margin-bottom: 0.5rem;
+}
+
+.story-content p {
+    color: #555;
+}
+
+/* Navegação da história */
+.story-navigation {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 1rem 0.5rem; /* Ajusta o padding para ficar mais próximo da borda */
+}
+
+.nav-button {
+    background-color: var(--primary-color);
+    color: var(--white-text);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 2px 5px var(--shadow-light);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.nav-button:hover {
+    background-color: var(--secondary-color);
+    transform: scale(1.05);
+}
+
+.nav-button:active {
+    transform: scale(0.95);
+}
+
+/* Barra de progresso (similar ao Google Stories) */
+.progress-bar {
+    flex-grow: 1; /* Ocupa o espaço entre os botões */
+    height: 5px;
+    background-color: var(--secondary-color);
+    border-radius: 5px;
+    margin: 0 1rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0%;
+    background-color: var(--primary-color);
+    border-radius: 5px;
+    transform-origin: left;
+    animation: progress 5s linear forwards; /* Animação de progresso */
+}
+
+.story-card.active .progress-bar::after {
+    animation: progress 5s linear forwards; /* Reinicia a animação quando a story está ativa */
+}
+
+.story-card:not(.active) .progress-bar::after {
+    animation: none; /* Pausa a animação em stories inativas */
+    width: 0;
+}
+
+@keyframes progress {
+    from {
+        width: 0%;
+    }
+    to {
+        width: 100%;
+    }
+}
+
+/* Efeitos adicionais (opcional, para um toque mais "fofo") */
+
+/* Efeito de zoom na imagem ao passar o mouse/tocar (para desktop, em mobile pode atrapalhar) */
+/* @media (min-width: 768px) {
+    .story-card:hover .story-image {
+        transform: scale(1.02);
+        transition: transform 0.3s ease;
+    }
+} */
+
+/* Efeito sutil no texto */
+.story-content p {
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5); /* Sombra branca suave */
+}
+
+/* Media Queries para responsividade */
+@media (max-width: 768px) {
+    body {
+        padding: 0.5rem;
+    }
+
+    .header h1 {
+        font-size: 2rem;
+    }
+
+    .stories-container {
+        max-width: 95%; /* Ocupa mais largura em telas menores */
+        height: 60vh; /* Altura baseada na viewport height */
+    }
+
+    .story-image {
+        height: 65%; /* Ajusta a altura da imagem */
+    }
+
+    .story-content h2 {
+        font-size: 1.5rem;
+    }
+
+    .story-content p {
+        font-size: 0.9rem;
+    }
+
+    .nav-button {
+        width: 35px;
+        height: 35px;
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .header h1 {
+        font-size: 1.8rem;
+    }
+
+    .stories-container {
+        height: 70vh; /* Ainda mais altura em telas muito pequenas */
+    }
+
+    .story-image {
+        height: 60%;
+    }
+
+    .story-content h2 {
+        font-size: 1.3rem;
+    }
+
+    .story-content p {
+        font-size: 0.85rem;
+    }
+
+    .nav-button {
+        width: 30px;
+        height: 30px;
+        font-size: 1rem;
+    }
+}
