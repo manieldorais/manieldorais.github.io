@@ -190,11 +190,11 @@ p {
     background-color: var(--primary-color);
     border-radius: 5px;
     transform-origin: left;
-    animation: progress 5s linear forwards; /* Animação de progresso */
+    animation: progress 10s linear forwards; /* Animação de progresso */
 }
 
 .story-card.active .progress-bar::after {
-    animation: progress 5s linear forwards; /* Reinicia a animação quando a story está ativa */
+    animation: progress 10s linear forwards; /* Reinicia a animação quando a story está ativa */
 }
 
 .story-card:not(.active) .progress-bar::after {

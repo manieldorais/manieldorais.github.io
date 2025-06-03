@@ -32,9 +32,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // Reinicia a animação da barra de progresso (CSS)
             activeProgressBar.style.animation = 'none';
             activeProgressBar.offsetHeight; // Força um reflow para reiniciar a animação
-            activeProgressBar.style.animation = 'progress 5s linear forwards';
+            activeProgressBar.style.animation = 'progress 10s linear forwards';
         }
-        autoAdvanceTimeout = setTimeout(showNextStory, 5000); // Avança automaticamente após 5 segundos
+        autoAdvanceTimeout = setTimeout(showNextStory, 10000); // Avança automaticamente após 10 segundos
     }
 
     // Adiciona event listeners aos botões de navegação
