@@ -1,0 +1,104 @@
+:root {
+    --bg-color: #1a1a2e;
+    --text-color: #e0e0e0;
+    --accent-color: #e94560;
+    --loader-color: #6a1b9a; /* Roxo escuro */
+    --spinner-color: #e94560; /* Mesma cor do seu accent */
+    --font-code: 'Fira Code', monospace;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: var(--font-code);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+    text-align: center;
+}
+
+.redirect-container {
+    padding: 40px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    border: 2px solid var(--loader-color);
+    backdrop-filter: blur(8px);
+    width: 90%;
+    max-width: 400px;
+    animation: fadeInScale 0.8s ease-out forwards;
+}
+
+@keyframes fadeInScale {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.loader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.loader-text {
+    font-size: 2.5em;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: var(--accent-color);
+    position: relative;
+    overflow: hidden;
+    white-space: nowrap;
+    animation: typing 2s steps(11) forwards, blink-caret 0.75s step-end infinite;
+    border-right: 2px solid rgba(255, 255, 255, 0.75); /* Simula o cursor */
+    width: 0; /* Começa com largura zero para o efeito de digitação */
+}
+
+/* Efeito de digitação */
+@keyframes typing {
+    from { width: 0; }
+    to { width: 100%; }
+}
+
+/* Efeito de cursor piscando */
+@keyframes blink-caret {
+    from, to { border-color: transparent; }
+    50% { border-color: rgba(255, 255, 255, 0.75); }
+}
+
+
+.spinner {
+    width: 60px;
+    height: 60px;
+    border: 6px solid rgba(255, 255, 255, 0.2);
+    border-top-color: var(--spinner-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    box-shadow: 0 0 15px var(--spinner-color);
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.message {
+    font-size: 1.1em;
+    margin-bottom: 20px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.fallback-link a {
+    color: var(--accent-color);
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.fallback-link a:hover {
+    color: var(--spinner-color);
+    text-decoration: underline;
+}

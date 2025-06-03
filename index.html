@@ -1,10 +1,29 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta http-equiv="refresh" content="0; url=./linktree/">
-        <title>Redirecionando...</title>
-    </head>
-    <body>
-        Se não for redirecionado automaticamente, <a href="/linktree/">clique aqui</a>.
-    </body>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecionando para @manieldorais...</title>
+    <link rel="stylesheet" href="redirect-style.css">
+    <link href="linktree/image.png" rel="stylesheet">
+</head>
+<body>
+    <div class="redirect-container">
+        <div class="loader">
+            <span class="loader-text">manieldorais</span>
+            <div class="spinner"></div>
+        </div>
+        <p class="message">Redirecionando para a minha página de links...</p>
+        <p class="fallback-link">
+            Se não for redirecionado automaticamente, <a href="./linktree/">clique aqui</a>.
+        </p>
+    </div>
+
+    <script>
+        // Redireciona após um pequeno delay para a animação aparecer
+        setTimeout(() => {
+            window.location.href = "./linktree/";
+        }, 2500); // Redireciona após 2.5 segundos. Ajuste se preferir mais rápido ou mais lento.
+    </script>
+</body>
 </html>
