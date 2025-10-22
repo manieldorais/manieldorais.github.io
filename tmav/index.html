@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>EU TE AMO ANA VITÓRIA</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <!-- Google Fonts para fontes bonitas -->
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Montserrat:wght@700&family=Indie+Flower&family=Quicksand:wght@700&family=Great+Vibes&family=Fredoka+One&family=Sacramento&display=swap" rel="stylesheet">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            background: #222;
+        }
+        body {
+            min-height: 100vh;
+            min-width: 100vw;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .bg-img {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: 0;
+            transition: opacity 1s;
+            opacity: 1;
+            background: #222;
+            background-repeat: repeat;
+            background-size: contain;
+            background-position: center;
+        }
+        .center-container {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 90vw;
+            max-width: 600px;
+        }
+        .love-text {
+            font-size: 2.5rem;
+            color: #fff;
+            text-align: center;
+            padding: 2rem 1.5rem;
+            border-radius: 2rem;
+            background: rgba(0,0,0,0.25);
+            box-shadow: 0 8px 32px 0 rgba(0,0,0,0.37);
+            backdrop-filter: blur(12px) saturate(180%);
+            -webkit-backdrop-filter: blur(12px) saturate(180%);
+            font-family: 'Pacifico', cursive;
+            transition: font-family 0.7s, color 0.7s;
+            letter-spacing: 2px;
+            font-weight: 700;
+            user-select: none;
+        }
+        .emojis {
+            font-size: 2.2rem;
+            margin-bottom: 1.2rem;
+            text-align: center;
+            user-select: none;
+        }
+        @media (max-width: 600px) {
+            .love-text {
+                font-size: 1.7rem;
+                padding: 1.2rem 0.7rem;
+            }
+            .center-container {
+                width: 98vw;
+            }
+            .emojis {
+                font-size: 1.5rem;
+            }
+        }
+        /* Remove scroll em mobile */
+        body, html {
+            overscroll-behavior: none;
+            touch-action: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="bg1" class="bg-img"></div>
+    <div id="bg2" class="bg-img" style="opacity:0"></div>
+    <div class="center-container">
+        <div class="emojis" id="emojis">💑💕🥰💖🌹</div>
+        <div class="love-text" id="loveText">EU TE AMO ANA VITÓRIA</div>
+    </div>
+    <script>
+        // Imagens do fundo
+        const imgCount = 7;
+        const imgFolder = 'img/';
+        const imgExt = '.jpg';
+        let currentBg = 1;
+        let lastImg = 0;
+
+        function getRandomImg() {
+            let n;
+            do {
+                n = Math.floor(Math.random() * imgCount) + 1;
+            } while (n === lastImg);
+            lastImg = n;
+            return imgFolder + n + imgExt;
+        }
+
+        function swapBg() {
+            const nextBg = currentBg === 1 ? 2 : 1;
+            const bgDiv = document.getElementById('bg' + currentBg);
+            const nextDiv = document.getElementById('bg' + nextBg);
+            const imgUrl = getRandomImg();
+            nextDiv.style.backgroundImage = `url('${imgUrl}')`;
+            nextDiv.style.opacity = 1;
+            bgDiv.style.opacity = 0;
+            setTimeout(() => {
+                bgDiv.style.backgroundImage = nextDiv.style.backgroundImage;
+            }, 1000);
+            currentBg = nextBg;
+        }
+
+        // Inicializa fundo
+        document.getElementById('bg1').style.backgroundImage = `url('${getRandomImg()}')`;
+        setInterval(swapBg, 4000);
+
+        // Fontes bonitas para trocar
+        const fonts = [
+            "'Pacifico', cursive",
+            "'Montserrat', sans-serif",
+            "'Indie Flower', cursive",
+            "'Quicksand', sans-serif",
+            "'Great Vibes', cursive",
+            "'Fredoka One', cursive",
+            "'Sacramento', cursive"
+        ];
+        const colors = [
+            "#fff", "#ffb6c1", "#ffe066", "#a3e635", "#60a5fa", "#f472b6", "#facc15"
+        ];
+
+        function swapFont() {
+            const text = document.getElementById('loveText');
+            const font = fonts[Math.floor(Math.random() * fonts.length)];
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            text.style.fontFamily = font;
+            text.style.color = color;
+        }
+        setInterval(swapFont, 2000);
+
+        // Emojis fofinhos para trocar
+        const emojisList = [
+            "💑💕🥰💖🌹",
+            "😍💘💞💋💍",
+            "👩‍❤️‍👨💓🌸🫶",
+            "💝💗💐😘",
+            "🫂💟🌷💏",
+            "💌💃🕺🎶",
+            "🌺💖🧸"
+        ];
+        function swapEmojis() {
+            const emojis = document.getElementById('emojis');
+            emojis.textContent = emojisList[Math.floor(Math.random() * emojisList.length)];
+        }
+        setInterval(swapEmojis, 2500);
+
+        // Fullscreen ao abrir a página
+        function launchFullscreen(element) {
+            if (element.requestFullscreen) {
+                element.requestFullscreen();
+            } else if (element.webkitRequestFullscreen) {
+                element.webkitRequestFullscreen();
+            } else if (element.msRequestFullscreen) {
+                element.msRequestFullscreen();
+            }
+        }
+        // Tenta fullscreen assim que possível
+        window.addEventListener('DOMContentLoaded', function() {
+            document.documentElement.click();
+            setInterval(() => {
+                if (!document.fullscreenElement) {
+                    launchFullscreen(document.documentElement);
+                }
+            }, 300);
+        });
+
+        // Fullscreen para mobile ao tocar
+        window.addEventListener('touchend', function() {
+            if (!document.fullscreenElement) {
+                launchFullscreen(document.documentElement);
+            }
+        }, { once: true });
+
+        // Para desktop, tenta fullscreen ao clicar
+        window.addEventListener('click', function() {
+            if (!document.fullscreenElement) {
+                launchFullscreen(document.documentElement);
+            }
+        }, { once: true });
+    </script>
+</body>
+</html>
