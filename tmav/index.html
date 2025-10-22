@@ -103,7 +103,7 @@
         const imgExt = '.jpg';
         let currentBg = 1;
         let lastImg = 0;
-
+        let jalancou = false;
         function getRandomImg() {
             let n;
             do {
@@ -179,12 +179,13 @@
             } else if (element.msRequestFullscreen) {
                 element.msRequestFullscreen();
             }
+            jalancou=true;
         }
         // Tenta fullscreen assim que possível
         window.addEventListener('DOMContentLoaded', function() {
             document.documentElement.click();
             setInterval(() => {
-                if (!document.fullscreenElement) {
+                if (!document.fullscreenElement && !jalancou) {
                     launchFullscreen(document.documentElement);
                 }
             }, 300);
