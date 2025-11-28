@@ -105,3 +105,27 @@ footer {
 	.contact-grid { grid-template-columns: 1fr; }
 	.article-title { font-size: 2rem; }
 }
+/* --- Estilo dos Comentários --- */
+.comment-box {
+	border: 1px solid var(--border);
+	background: var(--card-bg);
+	padding: 1rem;
+	margin-top: 1rem;
+	border-radius: 8px;
+}
+.comment-meta {
+	display: flex;
+	justify-content: space-between;
+	font-size: 0.85rem;
+	color: var(--accent);
+	margin-bottom: 0.5rem;
+	padding-bottom: 0.5rem;
+	border-bottom: 1px dotted #eee;
+}
+.comment-meta span {
+	color: var(--text-sec);
+}
+.comment-meta strong {
+	color: var(--text-main);
+	font-weight: 600;
+}

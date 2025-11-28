@@ -22,6 +22,34 @@
 		<article id="article-container">
 			<p style="text-align: center;">Carregando artigo...</p>
 		</article>
+
+		<section id="comments-section" class="container-read">
+	<h2 style="margin-top: 4rem;">💬 Comentários</h2>
+	
+	<div id="comment-list" style="margin-bottom: 2rem;">
+		</div>
+	
+	<h3 style="margin-top: 2rem; border-top: 1px solid #ddd; padding-top: 2rem;">Deixe seu Comentário</h3>
+	
+	<form id="comment-form" class="contact-form" style="background: none; box-shadow: none; padding: 0;">
+		<div class="form-group">
+			<label for="nome">Nome</label>
+			<input type="text" id="nome" name="nome" class="form-control" required>
+		</div>
+		
+		<div class="form-group">
+			<label for="email">Email</label>
+			<input type="email" id="email" name="email" class="form-control" required>
+		</div>
+		
+		<div class="form-group">
+			<label for="comentario">Comentário</label>
+			<textarea id="comentario" name="comentario" class="form-control" rows="4" required></textarea>
+		</div>
+		
+		<button type="submit" id="btn-comentar" class="btn-submit">Enviar Comentário</button>
+	</form>
+</section>
 	</main>
 
 	<footer>
