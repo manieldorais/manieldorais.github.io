@@ -1,0 +1,37 @@
+:root { --bg: #f8f9fa; --card: #ffffff; --text: #1f2937; --accent: #2563eb; --border: #e5e7eb; --danger: #ef4444; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); padding: 2rem; }
+.container { max-width: 900px; margin: 0 auto; }
+
+/* Login */
+#login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 100; }
+.login-box { background: var(--card); padding: 2rem; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+
+/* UI Admin */
+#admin-panel { display: none; }
+.header-panel { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+h1 { color: var(--accent); }
+
+/* Tabela */
+.table-container { background: var(--card); border-radius: 12px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 2rem; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 1rem; text-align: left; border-bottom: 1px solid var(--border); }
+th { background: #f3f4f6; font-weight: 600; }
+tr:last-child td { border-bottom: none; }
+
+/* Botões */
+.btn { padding: 0.5rem 1rem; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; transition: 0.2s; }
+.btn-primary { background: var(--accent); color: white; }
+.btn-primary:hover { background: #1d4ed8; }
+.btn-danger { background: var(--danger); color: white; margin-left: 0.5rem; }
+.btn-edit { background: #e5e7eb; }
+.btn-cancel { background: transparent; border: 1px solid var(--border); margin-right: 1rem; }
+
+/* Form e CKEditor */
+#form-section { background: var(--card); padding: 2rem; border-radius: 12px; display: none; }
+.form-group { margin-bottom: 1.5rem; }
+label { display: block; font-weight: 600; margin-bottom: 0.5rem; }
+input, textarea { width: 100%; padding: 0.8rem; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; }
+.ck-editor__editable { min-height: 300px; }
+.hidden { display: none !important; }

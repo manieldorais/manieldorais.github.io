@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Meu Blog Pessoal</title>
+	
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+	<style>
+		/* --- Variáveis e Reset --- */
+		:root {
+			--bg-color: #f8f9fa;
+			--card-bg: #ffffff;
+			--text-main: #1f2937;
+			--text-sec: #6b7280;
+			--accent: #2563eb; /* Azul moderno */
+			--accent-hover: #1d4ed8;
+			--shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+		}
+
+		* {
+			box-sizing: border-box;
+			margin: 0;
+			padding: 0;
+		}
+
+		body {
+			font-family: 'Inter', sans-serif;
+			background-color: var(--bg-color);
+			color: var(--text-main);
+			line-height: 1.6;
+		}
+
+		a { text-decoration: none; color: inherit; transition: 0.3s; }
+		ul { list-style: none; }
+
+		/* --- Layout --- */
+		.container {
+			max-width: 1200px;
+			margin: 0 auto;
+			padding: 0 1.5rem;
+		}
+
+		/* --- Header --- */
+		header {
+			background: var(--card-bg);
+			box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+			padding: 1rem 0;
+			position: sticky;
+			top: 0;
+			z-index: 10;
+		}
+
+		nav {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		.logo {
+			font-weight: 800;
+			font-size: 1.5rem;
+			color: var(--accent);
+		}
+
+		.nav-links {
+			display: flex;
+			gap: 2rem;
+		}
+
+		.nav-links a:hover { color: var(--accent); }
+
+		/* --- Hero Section --- */
+		.hero {
+			padding: 4rem 0;
+			text-align: center;
+		}
+
+		.hero h1 {
+			font-size: 2.5rem;
+			margin-bottom: 1rem;
+			color: #111827;
+		}
+
+		.hero p {
+			color: var(--text-sec);
+			max-width: 600px;
+			margin: 0 auto;
+		}
+
+		/* --- Grid de Posts --- */
+		.grid-posts {
+			display: grid;
+			/* Cria colunas automaticamente (minimo de 300px) */
+			grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+			gap: 2rem;
+			padding-bottom: 4rem;
+		}
+
+		/* --- Card do Artigo --- */
+		.card {
+			background: var(--card-bg);
+			border-radius: 12px;
+			overflow: hidden;
+			box-shadow: var(--shadow);
+			transition: transform 0.2s ease, box-shadow 0.2s ease;
+			display: flex;
+			flex-direction: column;
+		}
+
+		.card:hover {
+			transform: translateY(-5px);
+			box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+		}
+
+		.card-img {
+			width: 100%;
+			height: 200px;
+			background-color: #e5e7eb; /* Placeholder cinza */
+			object-fit: cover;
+		}
+
+		.card-content {
+			padding: 1.5rem;
+			display: flex;
+			flex-direction: column;
+			flex-grow: 1;
+		}
+
+		.tag {
+			font-size: 0.75rem;
+			text-transform: uppercase;
+			color: var(--accent);
+			font-weight: 600;
+			margin-bottom: 0.5rem;
+		}
+
+		.card-title {
+			font-size: 1.25rem;
+			margin-bottom: 0.75rem;
+			font-weight: 700;
+		}
+
+		.card-excerpt {
+			color: var(--text-sec);
+			font-size: 0.95rem;
+			margin-bottom: 1.5rem;
+			flex-grow: 1;
+		}
+
+		.read-more {
+			color: var(--accent);
+			font-weight: 600;
+			font-size: 0.9rem;
+		}
+
+		/* --- Footer --- */
+		footer {
+			text-align: center;
+			padding: 2rem 0;
+			color: var(--text-sec);
+			font-size: 0.9rem;
+			border-top: 1px solid #e5e7eb;
+			margin-top: auto;
+		}
+
+		/* --- Mobile Adjustments --- */
+		@media (max-width: 768px) {
+			.hero h1 { font-size: 2rem; }
+			.nav-links { display: none; } /* Menu simplificado para demo */
+		}
+	</style>
+</head>
+<body>
+
+	<header>
+		<div class="container">
+			<nav>
+				<a href="#" class="logo">Daniel's Blog</a>
+				<ul class="nav-links">
+					<li><a href="#">Artigos</a></li>
+					<li><a href="#">Tech & Linux</a></li>
+					<li><a href="#">Sobre</a></li>
+				</ul>
+			</nav>
+		</div>
+	</header>
+
+	<main class="container">
+		<section class="hero">
+			<h1>Bem-vindo ao meu espaço</h1>
+			<p>Aqui compartilho textos, notícias sobre tecnologia, Linux e algumas reflexões pessoais.</p>
+		</section>
+
+		<section class="grid-posts">
+			
+			<article class="card">
+				<div class="card-img" style="background: #cbd5e1 url('https://placehold.co/600x400/png') center/cover;"></div>
+				<div class="card-content">
+					<span class="tag">Tecnologia</span>
+					<h2 class="card-title">Configurando um Servidor Caseiro</h2>
+					<p class="card-excerpt">
+						Como reutilizar hardware antigo para criar um servidor de arquivos seguro com Linux e Samba.
+					</p>
+					<a href="#" class="read-more">Ler artigo &rarr;</a>
+				</div>
+			</article>
+
+			<article class="card">
+				<div class="card-img" style="background: #94a3b8 url('https://placehold.co/600x400/EEE/31343C') center/cover;"></div>
+				<div class="card-content">
+					<span class="tag">Reflexão</span>
+					<h2 class="card-title">A importância do foco</h2>
+					<p class="card-excerpt">
+						Textos curtos sobre produtividade e como organizar a rotina em um mundo cheio de distrações.
+					</p>
+					<a href="#" class="read-more">Ler artigo &rarr;</a>
+				</div>
+			</article>
+
+			<article class="card">
+				<div class="card-img" style="background: #64748b url('https://placehold.co/600x400/2563eb/FFF') center/cover;"></div>
+				<div class="card-content">
+					<span class="tag">Notícias</span>
+					<h2 class="card-title">O futuro do PHP</h2>
+					<p class="card-excerpt">
+						Analisando as novidades das versões recentes e por que a linguagem continua relevante na web moderna.
+					</p>
+					<a href="#" class="read-more">Ler artigo &rarr;</a>
+				</div>
+			</article>
+
+		</section>
+	</main>
+
+	<footer>
+		<p>&copy; 2025 Daniel. Desenvolvido com HTML5 & CSS3.</p>
+	</footer>
+
+</body>
+</html>

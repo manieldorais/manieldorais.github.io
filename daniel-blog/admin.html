@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Admin - Gerenciar Artigos</title>
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Fira+Code&display=swap" rel="stylesheet">
+	<script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js"></script>
+	<link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+	<div id="login-screen">
+		<div class="login-box">
+			<h2 style="margin-bottom: 1rem;">Admin Login</h2>
+			<input type="password" id="password-input" placeholder="Senha..." style="margin-bottom: 1rem;">
+			<button class="btn btn-primary" onclick="verificarSenha()" style="width: 100%">Entrar</button>
+		</div>
+	</div>
+
+	<div id="admin-panel" class="container">
+		
+		<div class="header-panel">
+			<h1>Gerenciador de Artigos</h1>
+			<button id="btn-toggle-view" class="btn btn-primary" onclick="mostrarFormulario()">+ Novo Artigo</button>
+		</div>
+
+		<div id="list-section" class="table-container">
+			<table>
+				<thead>
+					<tr>
+						<th>Data</th>
+						<th>Título</th>
+						<th>Tag</th>
+						<th style="text-align: right;">Ações</th>
+					</tr>
+				</thead>
+				<tbody id="posts-table-body">
+					</tbody>
+			</table>
+			<p id="loading-msg" style="padding: 1rem; text-align: center; color: #6b7280;">Carregando...</p>
+		</div>
+
+		<div id="form-section">
+			<h2 id="form-title" style="margin-bottom: 1.5rem;">Novo Artigo</h2>
+			
+			<form id="post-form">
+				<input type="hidden" id="edit-id"> <div class="form-group">
+					<label>Título</label>
+					<input type="text" id="titulo" required>
+				</div>
+
+				<div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+					<div>
+						<label>Tag</label>
+						<input type="text" id="tag">
+					</div>
+					<div>
+						<label>Data</label>
+						<input type="date" id="data" required>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label>URL da Imagem</label>
+					<input type="url" id="imagem" required>
+				</div>
+
+				<div class="form-group">
+					<label>Resumo</label>
+					<textarea id="resumo" rows="2" required></textarea>
+				</div>
+
+				<div class="form-group">
+                    <label>Conteúdo (HTML)</label>
+                    <textarea id="conteudo" class="code-editor"></textarea>
+                </div>
+
+				<div style="display: flex; justify-content: flex-end;">
+					<button type="button" class="btn btn-cancel" onclick="mostrarLista()">Cancelar</button>
+					<button type="submit" class="btn btn-primary" id="btn-save">Publicar Artigo</button>
+				</div>
+			</form>
+		</div>
+
+	</div>
+
+	<script type="module" src="js/admin.js"></script>
+</body>
+</html>

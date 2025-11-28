@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Titulo do Artigo - Daniel's Blog</title>
+	
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Fira+Code&display=swap" rel="stylesheet">
+
+	<style>
+		/* --- Mesmas Variáveis da Home --- */
+		:root {
+			--bg-color: #f8f9fa;
+			--card-bg: #ffffff;
+			--text-main: #1f2937;
+			--text-sec: #6b7280;
+			--accent: #2563eb;
+			--code-bg: #1e293b;
+		}
+
+		* { box-sizing: border-box; margin: 0; padding: 0; }
+
+		body {
+			font-family: 'Inter', sans-serif;
+			background-color: var(--bg-color);
+			color: var(--text-main);
+			line-height: 1.8; /* Maior altura de linha para leitura */
+		}
+
+		a { text-decoration: none; color: inherit; transition: 0.3s; }
+
+		/* --- Header (Reutilizado) --- */
+		header {
+			background: var(--card-bg);
+			box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+			padding: 1rem 0;
+			margin-bottom: 2rem;
+		}
+
+		.container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+		nav { display: flex; justify-content: space-between; align-items: center; }
+		.logo { font-weight: 800; font-size: 1.5rem; color: var(--accent); }
+		.nav-links { display: flex; gap: 2rem; list-style: none; }
+		.nav-links a:hover { color: var(--accent); }
+
+		/* --- Layout do Artigo --- */
+		.article-container {
+			max-width: 800px; /* Mais estreito para focar na leitura */
+			margin: 0 auto;
+			padding: 0 1.5rem 4rem 1.5rem;
+		}
+
+		/* Cabeçalho do Artigo */
+		.article-header {
+			margin-bottom: 2rem;
+			text-align: center;
+		}
+
+		.article-meta {
+			color: var(--text-sec);
+			font-size: 0.9rem;
+			margin-bottom: 1rem;
+			display: flex;
+			gap: 1rem;
+			justify-content: center;
+		}
+
+		.article-title {
+			font-size: 2.5rem;
+			line-height: 1.2;
+			margin-bottom: 1.5rem;
+			color: #111827;
+		}
+
+		.featured-image {
+			width: 100%;
+			height: auto;
+			border-radius: 12px;
+			margin-bottom: 2.5rem;
+			box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+		}
+
+		/* Corpo do Texto (Rich Text) */
+		.article-content {
+			font-size: 1.125rem; /* Texto levemente maior */
+		}
+
+		.article-content p { margin-bottom: 1.5rem; }
+
+		.article-content h2 {
+			font-size: 1.8rem;
+			margin-top: 2.5rem;
+			margin-bottom: 1rem;
+			color: #111827;
+		}
+
+		.article-content ul {
+			margin-bottom: 1.5rem;
+			padding-left: 1.5rem;
+			list-style: disc;
+		}
+
+		.article-content li { margin-bottom: 0.5rem; }
+
+		/* Citação (Blockquote) */
+		.article-content blockquote {
+			border-left: 4px solid var(--accent);
+			background: #eff6ff;
+			padding: 1rem 1.5rem;
+			margin: 2rem 0;
+			font-style: italic;
+			border-radius: 0 8px 8px 0;
+			color: #1e3a8a;
+		}
+
+		/* Snippets de Código */
+		.article-content pre {
+			background: var(--code-bg);
+			color: #e2e8f0;
+			padding: 1.5rem;
+			border-radius: 8px;
+			overflow-x: auto;
+			margin: 2rem 0;
+			font-family: 'Fira Code', monospace;
+			font-size: 0.9rem;
+		}
+
+		/* Botão Voltar */
+		.back-link {
+			display: inline-block;
+			margin-bottom: 2rem;
+			color: var(--accent);
+			font-weight: 600;
+		}
+		
+		.back-link:hover { text-decoration: underline; }
+
+		/* Footer */
+		footer {
+			text-align: center;
+			padding: 2rem 0;
+			color: var(--text-sec);
+			border-top: 1px solid #e5e7eb;
+			margin-top: auto;
+		}
+
+		@media (max-width: 768px) {
+			.article-title { font-size: 2rem; }
+			.nav-links { display: none; }
+		}
+	</style>
+</head>
+<body>
+
+	<header>
+		<div class="container">
+			<nav>
+				<a href="index.html" class="logo">Daniel's Blog</a>
+				<ul class="nav-links">
+					<li><a href="index.html">Home</a></li>
+					<li><a href="#">Sobre</a></li>
+				</ul>
+			</nav>
+		</div>
+	</header>
+
+	<main class="article-container">
+		
+		<a href="index.html" class="back-link">&larr; Voltar para o início</a>
+
+		<article>
+			<header class="article-header">
+				<div class="article-meta">
+					<span>28 de Novembro, 2025</span>
+					<span>&bull;</span>
+					<span>Linux & Servidores</span>
+				</div>
+				<h1 class="article-title">Configurando um Servidor Caseiro Seguro</h1>
+			</header>
+
+			<img src="https://placehold.co/800x450/2563eb/FFF" alt="Servidor" class="featured-image">
+
+			<div class="article-content">
+				<p>Recentemente, decidi reaproveitar um hardware antigo para criar um servidor de arquivos centralizado. A ideia era simples: ter um local seguro para backups e compartilhamento de mídia na rede local.</p>
+
+				<h2>Por que usar Linux?</h2>
+				<p>O Linux oferece uma estabilidade incomparável para esse tipo de tarefa. Além disso, o controle sobre os processos e a segurança é muito mais refinado.</p>
+
+				<blockquote>
+					"A simplicidade é o grau máximo de sofisticação." — Leonardo da Vinci
+				</blockquote>
+
+				<p>Para começar, instalei o Ubuntu Server e configurei o acesso SSH. Abaixo, um exemplo de como verificar as portas abertas no firewall:</p>
+
+				<pre><code># Verificando status do UFW
+sudo ufw status verbose
+
+# Permitindo SSH apenas da rede local
+sudo ufw allow from 192.168.1.0/24 to any port 22</code></pre>
+
+				<h2>Próximos passos</h2>
+				<ul>
+					<li>Configurar o Samba para compartilhamento com Windows.</li>
+					<li>Instalar Docker para rodar serviços isolados.</li>
+					<li>Configurar backups automáticos com Rsync.</li>
+				</ul>
+				
+				<p>Fique ligado para a parte 2 deste tutorial, onde entraremos em detalhes sobre a configuração do Samba.</p>
+			</div>
+		</article>
+
+	</main>
+
+	<footer>
+		<p>&copy; 2025 Daniel. Desenvolvido com HTML5 & CSS3.</p>
+	</footer>
+
+</body>
+</html>

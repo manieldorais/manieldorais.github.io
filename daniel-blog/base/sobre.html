@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Sobre Mim - Daniel</title>
+	
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+	<style>
+		/* --- Variáveis Globais (Mesmas das outras páginas) --- */
+		:root {
+			--bg-color: #f8f9fa;
+			--card-bg: #ffffff;
+			--text-main: #1f2937;
+			--text-sec: #6b7280;
+			--accent: #2563eb;
+			--accent-hover: #1d4ed8;
+			--border: #e5e7eb;
+		}
+
+		* { box-sizing: border-box; margin: 0; padding: 0; }
+
+		body {
+			font-family: 'Inter', sans-serif;
+			background-color: var(--bg-color);
+			color: var(--text-main);
+			line-height: 1.6;
+		}
+
+		a { text-decoration: none; color: inherit; transition: 0.3s; }
+
+		/* --- Header --- */
+		header {
+			background: var(--card-bg);
+			box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+			padding: 1rem 0;
+			margin-bottom: 3rem;
+		}
+		
+		.container { max-width: 1000px; margin: 0 auto; padding: 0 1.5rem; }
+		nav { display: flex; justify-content: space-between; align-items: center; }
+		.logo { font-weight: 800; font-size: 1.5rem; color: var(--accent); }
+		.nav-links { display: flex; gap: 2rem; list-style: none; }
+		.nav-links a:hover { color: var(--accent); }
+
+		/* --- Seção Sobre (Profile) --- */
+		.profile-section {
+			background: var(--card-bg);
+			border-radius: 12px;
+			padding: 3rem;
+			display: flex;
+			gap: 3rem;
+			align-items: center;
+			box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+			margin-bottom: 3rem;
+		}
+
+		.profile-img {
+			width: 200px;
+			height: 200px;
+			border-radius: 50%;
+			object-fit: cover;
+			flex-shrink: 0;
+			border: 4px solid var(--bg-color);
+			box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+		}
+
+		.profile-bio h1 { font-size: 2rem; margin-bottom: 1rem; color: #111827; }
+		.profile-bio p { color: var(--text-sec); margin-bottom: 1rem; }
+
+		/* Badges de Skills */
+		.skills-wrapper { margin-top: 1.5rem; }
+		.skill-tag {
+			display: inline-block;
+			background: #eff6ff;
+			color: var(--accent);
+			padding: 0.4rem 0.8rem;
+			border-radius: 20px;
+			font-size: 0.85rem;
+			font-weight: 600;
+			margin-right: 0.5rem;
+			margin-bottom: 0.5rem;
+		}
+
+		/* --- Grid de Contato e Form --- */
+		.contact-grid {
+			display: grid;
+			grid-template-columns: 1fr 1.5fr; /* Coluna da esquerda menor */
+			gap: 3rem;
+			margin-bottom: 4rem;
+		}
+
+		/* Info Lateral */
+		.contact-info h2 { font-size: 1.5rem; margin-bottom: 1.5rem; }
+		.info-item { margin-bottom: 1.5rem; }
+		.info-label { display: block; font-weight: 600; color: #111827; margin-bottom: 0.3rem; }
+		.info-value { color: var(--text-sec); }
+		
+		.social-links { display: flex; gap: 1rem; margin-top: 2rem; }
+		.btn-social {
+			padding: 0.6rem 1.2rem;
+			border: 1px solid var(--border);
+			border-radius: 8px;
+			font-weight: 600;
+			font-size: 0.9rem;
+		}
+		.btn-social:hover { border-color: var(--accent); color: var(--accent); }
+
+		/* Formulário */
+		.contact-form {
+			background: var(--card-bg);
+			padding: 2rem;
+			border-radius: 12px;
+			box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+		}
+
+		.form-group { margin-bottom: 1.5rem; }
+		
+		.form-group label {
+			display: block;
+			margin-bottom: 0.5rem;
+			font-weight: 600;
+			font-size: 0.9rem;
+		}
+
+		.form-control {
+			width: 100%;
+			padding: 0.8rem;
+			border: 1px solid var(--border);
+			border-radius: 8px;
+			font-family: inherit;
+			font-size: 1rem;
+			transition: border-color 0.2s;
+		}
+
+		.form-control:focus {
+			outline: none;
+			border-color: var(--accent);
+			box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+		}
+
+		textarea.form-control { resize: vertical; min-height: 120px; }
+
+		.btn-submit {
+			background: var(--accent);
+			color: white;
+			border: none;
+			padding: 0.8rem 2rem;
+			border-radius: 8px;
+			font-weight: 600;
+			cursor: pointer;
+			width: 100%;
+			font-size: 1rem;
+		}
+
+		.btn-submit:hover { background: var(--accent-hover); }
+
+		/* --- Footer --- */
+		footer {
+			text-align: center;
+			padding: 2rem 0;
+			color: var(--text-sec);
+			border-top: 1px solid var(--border);
+		}
+
+		/* --- Mobile --- */
+		@media (max-width: 768px) {
+			.profile-section { flex-direction: column; text-align: center; padding: 2rem; }
+			.contact-grid { grid-template-columns: 1fr; gap: 2rem; }
+			.nav-links { display: none; }
+			.social-links { justify-content: center; }
+		}
+	</style>
+</head>
+<body>
+
+	<header>
+		<div class="container">
+			<nav>
+				<a href="index.html" class="logo">Daniel's Blog</a>
+				<ul class="nav-links">
+					<li><a href="index.html">Home</a></li>
+					<li><a href="#">Artigos</a></li>
+					<li><a href="#">Sobre</a></li>
+				</ul>
+			</nav>
+		</div>
+	</header>
+
+	<main class="container">
+		
+		<section class="profile-section">
+			<img src="https://placehold.co/400x400/2563eb/FFF?text=Daniel" alt="Daniel" class="profile-img">
+			
+			<div class="profile-bio">
+				<h1>Olá, eu sou o Daniel.</h1>
+				<p>
+					Tenho 27 anos e sou um Full Stack Developer apaixonado por criar soluções eficientes. 
+					Tenho expertise em PHP, JavaScript e Java, e atualmente estou explorando o mundo do Python e Swift.
+				</p>
+				<p>
+					Quando não estou configurando servidores Linux ou escrevendo código, você provavelmente me encontrará 
+					estudando mixologia, cuidando das minhas plantas ou ouvindo Supercombo.
+				</p>
+				
+				<div class="skills-wrapper">
+					<span class="skill-tag">PHP</span>
+					<span class="skill-tag">JavaScript</span>
+					<span class="skill-tag">Linux (Ubuntu)</span>
+					<span class="skill-tag">Java</span>
+					<span class="skill-tag">Python</span>
+					<span class="skill-tag">SQL</span>
+				</div>
+			</div>
+		</section>
+
+		<section class="contact-grid">
+			
+			<div class="contact-info">
+				<h2>Vamos conversar?</h2>
+				<p style="color: var(--text-sec); margin-bottom: 2rem;">
+					Estou sempre aberto a discutir novos projetos, ideias de tecnologia ou apenas trocar uma ideia sobre desenvolvimento.
+				</p>
+
+				<div class="info-item">
+					<span class="info-label">Localização</span>
+					<span class="info-value">Brasil</span>
+				</div>
+
+				<div class="info-item">
+					<span class="info-label">Email</span>
+					<span class="info-value">contato@danieldev.com</span>
+				</div>
+
+				<div class="social-links">
+					<a href="#" class="btn-social">GitHub</a>
+					<a href="#" class="btn-social">LinkedIn</a>
+					<a href="#" class="btn-social">Twitter</a>
+				</div>
+			</div>
+
+			<form class="contact-form" action="enviar_contato.php" method="POST">
+				<div class="form-group">
+					<label for="nome">Seu Nome</label>
+					<input type="text" id="nome" name="nome" class="form-control" placeholder="Como devo te chamar?" required>
+				</div>
+
+				<div class="form-group">
+					<label for="email">Seu Email</label>
+					<input type="email" id="email" name="email" class="form-control" placeholder="exemplo@email.com" required>
+				</div>
+
+				<div class="form-group">
+					<label for="mensagem">Mensagem</label>
+					<textarea id="mensagem" name="mensagem" class="form-control" placeholder="Escreva sua mensagem aqui..." required></textarea>
+				</div>
+
+				<button type="submit" class="btn-submit">Enviar Mensagem</button>
+			</form>
+
+		</section>
+
+	</main>
+
+	<footer>
+		<p>&copy; 2025 Daniel. Desenvolvido com HTML5 & CSS3.</p>
+	</footer>
+
+</body>
+</html>
