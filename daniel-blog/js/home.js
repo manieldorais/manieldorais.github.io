@@ -19,7 +19,7 @@ async function carregarArtigos() {
 			const post = doc.data();
 			const id = doc.id;
 			let hoje = new Date();
-			let dataPost = post.data.toDate();
+			let dataPost = new Date(post.data);
 			let diferencaDias = Math.floor((hoje - dataPost) / (1000 * 60 * 60 * 24));
 
 			if (diferencaDias === 0) {
