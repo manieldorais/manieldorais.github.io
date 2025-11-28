@@ -18,7 +18,20 @@ async function carregarArtigos() {
 		querySnapshot.forEach((doc) => {
 			const post = doc.data();
 			const id = doc.id;
+			let hoje = new Date();
+			let dataPost = post.data.toDate();
+			let diferencaDias = Math.floor((hoje - dataPost) / (1000 * 60 * 60 * 24));
 
+			if (diferencaDias === 0) {
+				post.resumo += ' (Publicado hoje)';
+			} else if (diferencaDias === 1) {
+				post.resumo += ' (Publicado ontem)';
+			} else {
+				post.resumo += ` (Publicado há ${diferencaDias} dias)`;
+			}
+			if(dataPost > hoje){
+				return;
+			}
 			const htmlCard = `
 				<article class="card">
 					<div class="card-img" style="background-image: url('${post.imagem || 'https://placehold.co/600x400'}');"></div>
