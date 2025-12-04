@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#000000">
-    <title>Visualizador de Frequência Duplo</title>
+    <title>FrequencyViz</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;800&display=swap');
@@ -56,7 +56,7 @@
     <!-- Header -->
     <div class="text-center mb-12 relative z-10">
         <h1 class="text-4xl font-extrabold tracking-tight mb-2 uppercase">Frequency<span class="text-purple-500">Viz</span></h1>
-        <p class="text-gray-500 text-xs tracking-widest">PRECISION MODE</p>
+        <p class="text-gray-500 text-xs tracking-widest">PRECISION MODE + WAKE LOCK</p>
     </div>
 
     <!-- Container Duplo -->
@@ -117,6 +117,27 @@
                 }
             }
         };
+        
+        // --- WAKE LOCK (TELA LIGADA) ---
+        let wakeLock = null;
+
+        const requestWakeLock = async () => {
+            if ('wakeLock' in navigator) {
+                try {
+                    wakeLock = await navigator.wakeLock.request('screen');
+                    console.log('Wake Lock ativo!');
+                    
+                    // Se o usuário minimizar e voltar, precisamos pedir de novo
+                    document.addEventListener('visibilitychange', async () => {
+                        if (wakeLock !== null && document.visibilityState === 'visible') {
+                            wakeLock = await navigator.wakeLock.request('screen');
+                        }
+                    });
+                } catch (err) {
+                    console.log(`${err.name}, ${err.message}`);
+                }
+            }
+        };
 
         // --- ÁUDIO ---
         let audioCtx, analyser, dataArray, isRunning = false;
@@ -125,6 +146,9 @@
             if (isRunning) return;
 
             try {
+                // Tenta manter a tela ligada assim que o áudio começar
+                await requestWakeLock();
+
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 analyser = audioCtx.createAnalyser();
                 
