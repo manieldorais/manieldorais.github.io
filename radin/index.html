@@ -5,17 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Radin de Som</title>
 	<script src="https://cdn.tailwindcss.com"></script>
-	<style>
-		@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
-		body { font-family: 'JetBrains Mono', monospace; }
-		canvas { image-rendering: pixelated; }
-		/* Animação para quando recebe um char */
-		@keyframes flash {
-			0% { background-color: rgba(34, 197, 94, 0.2); }
-			100% { background-color: transparent; }
-		}
-		.char-received { animation: flash 0.5s ease-out; }
-	</style>
+	<link rel="stylesheet" href="style.css">
 </head>
 <!-- Ajuste 100% Mobile: Removemos travas de rolagem do desktop -->
 <body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col overflow-y-auto">
@@ -46,7 +36,7 @@
 					ENVIAR
 				</h2>
 				
-				<div class="flex gap-2">
+				<div class="flex gap-2 flex-wrap justify-end">
 					<select id="txFreqBase" class="bg-gray-900 text-xs border border-gray-600 rounded px-2 py-1 outline-none text-gray-300 focus:border-blue-500">
 						<option value="1000">1.0 kHz (Teste)</option>
 						<option value="3000">3.0 kHz (Estável)</option>
@@ -55,11 +45,13 @@
 						<option value="9000">9.0 kHz (Alta Fid.)</option>
 						<option value="12000">12.0 kHz</option>
 						<option value="15000">15.0 kHz</option>
+						<option value="19000">19.0 kHz (Ultrassom)</option>
 					</select>
 					
 					<select id="txSpeed" class="bg-gray-900 text-xs border border-gray-600 rounded px-2 py-1 outline-none text-gray-300 focus:border-blue-500">
 						<option value="100">100ms (Lento)</option>
 						<option value="60">60ms (Rápido)</option>
+						<option value="30">30ms (Turbo 19kHz)</option>
 					</select>
 				</div>
 			</div>
@@ -95,7 +87,14 @@
 					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
 					RECEBER
 				</h2>
-				<div class="flex gap-2 items-center">
+				<div class="flex gap-2 items-center flex-wrap justify-end">
+					<!-- ADDED: Seletor de Velocidade no RX -->
+					<select id="rxSpeed" class="bg-gray-900 text-xs border border-gray-600 rounded px-2 py-1 outline-none text-gray-300 focus:border-green-500">
+						<option value="100">100ms</option>
+						<option value="60">60ms</option>
+						<option value="30">30ms (Turbo)</option>
+					</select>
+					
 					<select id="rxFreqBase" class="bg-gray-900 text-xs border border-gray-600 rounded px-2 py-1 outline-none text-gray-300 focus:border-green-500">
 						<option value="1000">1.0 kHz</option>
 						<option value="3000">3.0 kHz</option>
@@ -104,6 +103,7 @@
 						<option value="9000">9.0 kHz</option>
 						<option value="12000">12.0 kHz</option>
 						<option value="15000">15.0 kHz</option>
+						<option value="19000">19.0 kHz</option>
 					</select>
 					<button id="btnListen" class="bg-green-600 hover:bg-green-500 text-white text-xs px-3 py-2 rounded-lg font-bold transition whitespace-nowrap touch-manipulation">
 						LIGAR MIC
@@ -133,240 +133,6 @@
 			</div>
 		</section>
 	</main>
-	<script>
-		// --- CONFIGURAÇÃO ---
-		const SHIFT = 400; // Bit 1 = Base + 400Hz
-		// --- TRANSMISSOR (TX) ---
-		const TX = {
-			ctx: null,
-			isSending: false,
-			init: () => {
-				if (!TX.ctx) TX.ctx = new (window.AudioContext || window.webkitAudioContext)();
-			},
-			playTone: (freq, startTime, duration) => {
-				const osc = TX.ctx.createOscillator();
-				const gain = TX.ctx.createGain();
-				osc.type = 'sine';
-				osc.frequency.value = freq;
-				osc.connect(gain);
-				gain.connect(TX.ctx.destination);
-				// Envelope suave
-				gain.gain.setValueAtTime(0, startTime);
-				gain.gain.linearRampToValueAtTime(1, startTime + 0.01);
-				gain.gain.setValueAtTime(1, startTime + duration - 0.01);
-				gain.gain.linearRampToValueAtTime(0, startTime + duration);
-				osc.start(startTime);
-				osc.stop(startTime + duration + 0.05);
-			},
-			send: async (text) => {
-				TX.init();
-				if (TX.ctx.state === 'suspended') await TX.ctx.resume();
-				if (TX.isSending) return;
-				TX.isSending = true;
-				// Capturar configurações do momento do clique
-				const txBaseFreq = parseInt(document.getElementById('txFreqBase').value);
-				const bitLen = parseInt(document.getElementById('txSpeed').value);
-				const bitSec = bitLen / 1000;
-				const btn = document.getElementById('btnSend');
-				const originalText = btn.innerHTML;
-				btn.innerHTML = `<span class="animate-spin">↻</span> ENVIANDO...`;
-				btn.classList.add('bg-red-600', 'cursor-not-allowed');
-				// Limpar visualizador TX
-				const vis = document.getElementById('txVisualizer');
-				vis.innerHTML = '';
-				// Agendar áudio
-				let now = TX.ctx.currentTime + 0.5;
-				// Funções locais de frequência baseadas na escolha do TX
-				const getFreq1 = () => txBaseFreq + SHIFT;
-				const getFreq0 = () => txBaseFreq;
-				for (let i = 0; i < text.length; i++) {
-					const charCode = text.charCodeAt(i);
-					// Start Bit (Sempre 1)
-					TX.playTone(getFreq1(), now, bitSec);
-					TX.addVis(1, "START");
-					now += bitSec;
-					// 8 Bits de Dados
-					for (let b = 0; b < 8; b++) {
-						const bit = (charCode >> (7 - b)) & 1;
-						const freq = bit === 1 ? getFreq1() : getFreq0();
-						TX.playTone(freq, now, bitSec);
-						TX.addVis(bit, bit);
-						now += bitSec;
-					}
-					// Gap
-					now += (bitSec * 2);
-					TX.addVis('gap', 'GAP');
-				}
-				const totalTime = (now - TX.ctx.currentTime) * 1000;
-				setTimeout(() => {
-					TX.isSending = false;
-					btn.innerHTML = originalText;
-					btn.classList.remove('bg-red-600', 'cursor-not-allowed');
-				}, totalTime);
-			},
-			addVis: (type, label) => {
-				const vis = document.getElementById('txVisualizer');
-				const el = document.createElement('div');
-				el.className = `w-4 h-6 flex items-center justify-center text-[8px] rounded shrink-0 mb-1 ${
-				type === 1 ? 'bg-green-600 text-white' : 
-				type === 0 ? 'bg-blue-600 text-white' : 'bg-gray-800 text-gray-600 w-2'
-				}`;
-				if(type !== 'gap') el.innerText = label === "START" ? "S" : label;
-				vis.appendChild(el);
-				vis.scrollTop = vis.scrollHeight;
-			}
-		};
-		// --- RECEPTOR (RX) ---
-		const RX = {
-			ctx: null,
-			analyser: null,
-			buffer: new Uint8Array(0),
-			isActive: false,
-			state: 'IDLE',
-			bits: [],
-			syncTime: 0,
-			armed: false,
-			threshold: 40,
-			start: async () => {
-				try {
-					RX.ctx = new (window.AudioContext || window.webkitAudioContext)();
-					RX.analyser = RX.ctx.createAnalyser();
-					RX.analyser.fftSize = 1024;
-					RX.analyser.smoothingTimeConstant = 0.2;
-					const stream = await navigator.mediaDevices.getUserMedia({ 
-						audio: { echoCancellation: false, autoGainControl: false, noiseSuppression: false } 
-					});
-					const source = RX.ctx.createMediaStreamSource(stream);
-					source.connect(RX.analyser);
-					RX.isActive = true;
-					RX.buffer = new Uint8Array(RX.analyser.frequencyBinCount);
-					document.getElementById('btnListen').innerText = "OUVINDO...";
-					document.getElementById('btnListen').classList.replace('bg-green-600', 'bg-red-500');
-					document.getElementById('rxStateIndicator').innerText = "AGUARDANDO SINAL...";
-					document.getElementById('rxStateIndicator').classList.add('animate-pulse');
-					RX.loop();
-				} catch (err) {
-					alert("Erro Mic: " + err);
-				}
-			},
-			getBinEnergy: (targetFreq) => {
-				const nyquist = RX.ctx.sampleRate / 2;
-				const index = Math.round((targetFreq / nyquist) * RX.analyser.frequencyBinCount);
-				let sum = 0;
-				for(let i = -1; i <= 1; i++) sum += RX.buffer[index + i] || 0;
-				return sum / 3;
-			},
-			loop: () => {
-				if (!RX.isActive) return;
-				requestAnimationFrame(RX.loop);
-				RX.analyser.getByteFrequencyData(RX.buffer);
-				// Config dinâmica baseada no seletor RX
-				const rxBaseFreq = parseInt(document.getElementById('rxFreqBase').value);
-				const freq0 = rxBaseFreq;
-				const freq1 = rxBaseFreq + SHIFT;
-				// Desenhar
-				RX.drawDebug(freq0, freq1);
-				const energy0 = RX.getBinEnergy(freq0);
-				const energy1 = RX.getBinEnergy(freq1);
-				const maxEnergy = Math.max(energy0, energy1);
-				const bitLen = 100; // Rx assume velocidade lenta padrão para sincronia mais fácil, idealmente deveria auto-detectar ou ter config
-				const now = performance.now();
-				// Máquina de Estados RX
-				if (RX.state === 'IDLE') {
-					if (maxEnergy < RX.threshold) RX.armed = true;
-					if (RX.armed && energy1 > RX.threshold && energy1 > energy0 + 20) {
-						RX.state = 'READING';
-						RX.syncTime = now;
-						RX.bits = [];
-						RX.armed = false;
-						
-						document.getElementById('rxStateIndicator').innerText = "RECEBENDO...";
-						document.getElementById('rxStateIndicator').className = "text-green-400 font-bold";
-					}
-				}
-				else if (RX.state === 'READING') {
-					// Usamos a velocidade do TX selecionada no RX? 
-					// Para simplificar, assumimos que o usuário configura TX lento -> RX lento.
-					// Mas aqui vamos fixar em 100ms (Lento) que é o mais seguro.
-					// Se o user transmitir rápido, precisaria de um seletor de velocidade no RX também.
-					// Para o demo, vamos assumir que o TX Speed 'Lento' é o padrão compatível.
-					// *Se quiser suportar Rápido no RX, adicione um seletor de Baud Rate no RX também.*
-					
-					// Pegando bitlen do transmissor (hack visual) ou fixo. Vamos tentar inferir do TX visualmente se tiver na mesma tela?
-					// Não, vamos usar a configuração "Lento" (100ms) hardcoded no RX para robustez, 
-					// ou adicionar seletor. Vou usar o valor do seletor TX se disponível, senão 100.
-					let currentBitLen = parseInt(document.getElementById('txSpeed').value) || 100;
-					const bitsLidos = RX.bits.length;
-					const sampleTime = RX.syncTime + (currentBitLen * (1 + bitsLidos)) + (currentBitLen * 0.5);
-					if (now >= sampleTime) {
-						let bit = 0;
-						if (maxEnergy >= RX.threshold) {
-							bit = energy1 > energy0 ? 1 : 0;
-						}
-						RX.bits.push(bit);
-						if (RX.bits.length === 8) {
-							RX.processChar();
-							RX.state = 'COOLDOWN';
-							RX.cooldownEnd = now + currentBitLen; 
-						}
-					}
-				}
-				else if (RX.state === 'COOLDOWN') {
-					if (now > RX.cooldownEnd) {
-						RX.state = 'IDLE';
-						document.getElementById('rxStateIndicator').innerText = "AGUARDANDO...";
-						document.getElementById('rxStateIndicator').className = "text-gray-500 animate-pulse";
-					}
-				}
-			},
-			processChar: () => {
-				let charCode = 0;
-				RX.bits.forEach(bit => { charCode = (charCode << 1) | bit; });
-				if ((charCode >= 32 && charCode <= 126) || charCode === 10 || charCode === 13) {
-					const char = String.fromCharCode(charCode);
-					const term = document.getElementById('rxTerminal');
-					let currentText = term.innerText;
-					if (currentText.endsWith('_')) currentText = currentText.slice(0, -1);
-					term.innerText = currentText + char + "_";
-					term.scrollTop = term.scrollHeight;
-					term.classList.remove('char-received');
-					void term.offsetWidth;
-					term.classList.add('char-received');
-				}
-			},
-			drawDebug: (f0, f1) => {
-				const cvs = document.getElementById('spectrumCanvas');
-				const ctx = cvs.getContext('2d');
-				const w = cvs.width;
-				const h = cvs.height;
-				ctx.fillStyle = 'rgba(0,0,0,0.2)';
-				ctx.fillRect(0, 0, w, h);
-				const barW = (w / RX.buffer.length) * 2;
-				let x = 0;
-				for(let i=0; i<RX.buffer.length; i++) {
-					const v = RX.buffer[i];
-					ctx.fillStyle = `rgb(0, ${v}, 0)`;
-					ctx.fillRect(x, h - (v/2), barW, v/2);
-					x += barW;
-				}
-				const e0 = RX.getBinEnergy(f0);
-				const e1 = RX.getBinEnergy(f1);
-				document.getElementById('debugLevel').innerText = `L:${e0.toFixed(0)} / H:${e1.toFixed(0)}`;
-			}
-		};
-		// --- BINDINGS ---
-		window.onload = () => {
-			document.getElementById('btnSend').onclick = () => {
-				const txt = document.getElementById('txInput').value;
-				if(txt) TX.send(txt);
-			};
-			
-			document.getElementById('btnListen').onclick = RX.start;
-			
-			const cvs = document.getElementById('spectrumCanvas');
-			cvs.width = cvs.offsetWidth;
-			cvs.height = cvs.offsetHeight;
-		};
-	</script>
+	<script src="script.js"></script>
 </body>
 </html>
