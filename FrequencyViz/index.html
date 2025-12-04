@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#000000">
+    <title>Visualizador de Frequência Duplo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;800&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+
+        /* Wrapper para as duas colunas */
+        .stereo-container {
+            display: flex;
+            gap: 20px; /* Espaço entre as duas torres */
+            align-items: flex-end;
+        }
+
+        /* Coluna individual */
+        .viz-col {
+            display: flex;
+            flex-direction: column-reverse; /* Graves em baixo */
+            gap: 6px;
+            height: 65vh; /* Aumentei um pouco para aproveitar melhor a tela cheia */
+            width: 80px;
+        }
+
+        /* Estilo base do bloco */
+        .freq-block {
+            flex: 1;
+            border-radius: 4px;
+            background-color: #1a1a1a;
+            /* Transição rápida para acender, lenta para apagar (efeito de decaimento) */
+            transition: background-color 0.05s ease-out, box-shadow 0.05s ease-out, transform 0.05s, opacity 0.1s;
+            position: relative;
+            opacity: 0.1; /* Bem apagado quando inativo */
+        }
+
+        /* Efeito de brilho */
+        .freq-block.active {
+            opacity: 1;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body class="bg-black text-white min-h-screen flex flex-col items-center justify-center p-6 overflow-hidden relative">
+
+    <!-- Botão Tela Cheia -->
+    <button id="btnFullscreen" class="absolute top-6 right-6 z-50 p-3 text-gray-500 hover:text-white bg-gray-900/50 rounded-full backdrop-blur-sm transition active:scale-90">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+        </svg>
+    </button>
+
+    <!-- Header -->
+    <div class="text-center mb-12 relative z-10">
+        <h1 class="text-4xl font-extrabold tracking-tight mb-2 uppercase">Frequency<span class="text-purple-500">Viz</span></h1>
+        <p class="text-gray-500 text-xs tracking-widest">PRECISION MODE</p>
+    </div>
+
+    <!-- Container Duplo -->
+    <div class="stereo-container">
+        <div id="col-left" class="viz-col"></div>
+        <div id="col-right" class="viz-col"></div>
+    </div>
+
+    <!-- Botão de Início -->
+    <div class="mt-16 text-center relative z-10">
+        <button id="btnStart" class="bg-purple-600 hover:bg-purple-500 text-white font-bold py-4 px-10 rounded-full transition active:scale-95 shadow-[0_0_30px_rgba(147,51,234,0.4)]">
+            ATIVAR SENSOR
+        </button>
+        <p id="statusText" class="text-[10px] text-gray-600 mt-4 font-mono uppercase">Aguardando Input</p>
+    </div>
+
+    <script>
+        const BANDS = 12; 
+        const leftContainer = document.getElementById('col-left');
+        const rightContainer = document.getElementById('col-right');
+        
+        // Arrays para guardar as referências dos blocos
+        const blocksLeft = [];
+        const blocksRight = [];
+
+        // Função para criar uma coluna de blocos
+        function createColumn(container, storageArray) {
+            for (let i = 0; i < BANDS; i++) {
+                const div = document.createElement('div');
+                div.className = 'freq-block';
+                
+                // Cor HSL: 0 (Vermelho) até 280 (Roxo)
+                const hue = (i / (BANDS - 1)) * 280; 
+                const color = `hsl(${hue}, 100%, 60%)`;
+                
+                div.dataset.color = color;
+                div.style.backgroundColor = color;
+                div.style.boxShadow = `none`;
+                
+                container.appendChild(div);
+                storageArray.push(div);
+            }
+        }
+
+        // Criar as duas colunas
+        createColumn(leftContainer, blocksLeft);
+        createColumn(rightContainer, blocksRight);
+
+        // --- TELA CHEIA ---
+        document.getElementById('btnFullscreen').onclick = () => {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Erro ao ativar tela cheia: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        };
+
+        // --- ÁUDIO ---
+        let audioCtx, analyser, dataArray, isRunning = false;
+
+        const startAudio = async () => {
+            if (isRunning) return;
+
+            try {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioCtx.createAnalyser();
+                
+                // FFT 4096 = Muita resolução para pegar graves precisos
+                analyser.fftSize = 4096; 
+                
+                // Smoothing menor (0.7) para ser mais "rápido" e responder a batidas secas
+                // Se quiser mais suave, aumente para 0.85
+                analyser.smoothingTimeConstant = 0.75; 
+
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                const source = audioCtx.createMediaStreamSource(stream);
+                source.connect(analyser);
+
+                const bufferLength = analyser.frequencyBinCount;
+                dataArray = new Uint8Array(bufferLength);
+
+                isRunning = true;
+                document.getElementById('btnStart').classList.add('hidden');
+                document.getElementById('statusText').innerText = "• ESCUTANDO •";
+                document.getElementById('statusText').className = "text-xs text-green-500 mt-4 font-mono uppercase animate-pulse";
+
+                loop();
+            } catch (err) {
+                alert("Erro: " + err);
+            }
+        };
+
+        const loop = () => {
+            requestAnimationFrame(loop);
+            analyser.getByteFrequencyData(dataArray);
+
+            // Cortar frequências inúteis
+            const minBin = 4; // Ignora < 20Hz
+            const maxBin = dataArray.length * 0.6; // Ignora > 12kHz (geralmente vazio)
+
+            for (let i = 0; i < BANDS; i++) {
+                // Escala Logarítmica para separar bem os graves
+                // Math.pow(x, 2.5) "estica" os graves para ocuparem os primeiros blocos
+                const startRatio = Math.pow(i / BANDS, 2.5); 
+                const endRatio = Math.pow((i + 1) / BANDS, 2.5);
+
+                const startBin = Math.floor(minBin + (maxBin - minBin) * startRatio);
+                const endBin = Math.floor(minBin + (maxBin - minBin) * endRatio);
+                const actualEndBin = Math.max(endBin, startBin + 1);
+
+                // --- MUDANÇA: USAR MÁXIMO (PEAK) EM VEZ DE MÉDIA ---
+                // Isso ajuda a isolar frequências específicas. Se houver um pico agudo,
+                // apenas a faixa daquele pico vai acender forte, sem "arrastar" as vizinhas pela média.
+                let maxVal = 0;
+                for (let j = startBin; j < actualEndBin; j++) {
+                    if (dataArray[j] > maxVal) maxVal = dataArray[j];
+                }
+
+                // Atualizar as duas colunas (efeito espelhado ou igual)
+                updateBlock(blocksLeft[i], maxVal, i);
+                updateBlock(blocksRight[i], maxVal, i); // Usando os mesmos dados para simular estéreo simétrico
+            }
+        };
+
+        const updateBlock = (block, volume, index) => {
+            const color = block.dataset.color;
+            
+            // Noise Gate agressivo: Se o som for baixo, zera totalmente.
+            // Isso impede que as barras fiquem "tremendo" com ruído de fundo.
+            const noiseFloor = 60; 
+            
+            let normalized = 0;
+            if (volume > noiseFloor) {
+                normalized = (volume - noiseFloor) / (255 - noiseFloor);
+            }
+
+            // Curva de brilho exponencial (x^3)
+            // Valores baixos ficam quase invisíveis, valores altos explodem.
+            // Isso aumenta MUITO a percepção de isolamento.
+            const intensity = Math.pow(normalized, 3);
+
+            // Opacidade mínima 0.1, máxima 1
+            const opacity = 0.1 + (intensity * 0.9);
+            
+            block.style.opacity = opacity;
+
+            // Transformação visual (escala)
+            if (intensity > 0.1) {
+                // Brilho intenso
+                block.style.boxShadow = `0 0 ${intensity * 15}px ${color}`;
+                // Leve escala para dar "impacto" na batida
+                block.style.transform = `scale(${1 + (intensity * 0.15)})`;
+                block.style.zIndex = 10;
+            } else {
+                block.style.boxShadow = 'none';
+                block.style.transform = 'scale(1)';
+                block.style.zIndex = 1;
+            }
+        };
+
+        document.getElementById('btnStart').onclick = startAudio;
+
+    </script>
+</body>
+</html>
