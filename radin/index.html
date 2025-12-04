@@ -2,137 +2,156 @@
 <html lang="pt-BR">
 <head>
 	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 	<title>Radin de Som</title>
 	<script src="https://cdn.tailwindcss.com"></script>
-	<link rel="stylesheet" href="style.css">
+	<style>
+		
+	</style>
 </head>
-<!-- Ajuste 100% Mobile: Removemos travas de rolagem do desktop -->
-<body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col overflow-y-auto">
+<body class="bg-gray-950 text-gray-100 min-h-screen flex flex-col overflow-y-auto selection:bg-green-500/30">
 	
-	<!-- Topo -->
-	<header class="bg-gray-800 border-b border-gray-700 p-4 flex justify-between items-center shadow-md z-10 shrink-0 sticky top-0">
+	<!-- Topo App -->
+	<header class="bg-gray-900/80 backdrop-blur-md border-b border-gray-800 p-4 sticky top-0 z-50 flex justify-between items-center">
 		<div class="flex items-center gap-3">
-			<div class="w-3 h-3 bg-green-500 rounded-full animate-pulse shadow-[0_0_10px_#22c55e]"></div>
-			<h1 class="font-bold text-lg tracking-wider text-green-400">RADIN DE <span class="text-white">SOM</span></h1>
+			<div class="relative">
+				<div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+				<div class="absolute inset-0 bg-green-500 rounded-full animate-ping opacity-20"></div>
+			</div>
+			<h1 class="font-extrabold text-xl tracking-tight text-white">RADIN<span class="text-green-500">.SOM</span></h1>
 		</div>
-		<div class="flex gap-4 text-xs font-bold text-gray-400 hidden sm:flex">
-			<div class="flex items-center gap-1"><span class="w-2 h-2 bg-blue-500 rounded-full"></span> 0 = LOW</div>
-			<div class="flex items-center gap-1"><span class="w-2 h-2 bg-green-500 rounded-full"></span> 1 = HIGH</div>
+		<!-- Indicador de Status Discreto -->
+		<div class="px-3 py-1 rounded-full bg-gray-800 border border-gray-700 text-[10px] font-mono text-gray-400 flex items-center gap-2">
+			<span class="w-1.5 h-1.5 rounded-full bg-gray-500" id="globalStatusDot"></span>
+			<span id="globalStatusText">STANDBY</span>
 		</div>
 	</header>
 	
-	<!-- Layout alterado para coluna única (flex-col) sempre -->
-	<main class="flex-grow flex flex-col h-full max-w-lg mx-auto w-full">
+	<main class="flex-grow flex flex-col w-full max-w-md mx-auto pb-6">
 		
-		<!-- SEÇÃO TRANSMISSOR -->
-		<section class="border-b border-gray-700 flex flex-col relative bg-gray-900/50">
-			<div class="absolute top-0 left-0 w-1 h-full bg-blue-600/20"></div>
+		<!-- SEÇÃO TRANSMISSOR (Card) -->
+		<section class="p-4 flex flex-col gap-4">
 			
-			<!-- Header do TX com Controles -->
-			<div class="p-4 border-b border-gray-700 bg-gray-800/50 flex flex-wrap gap-2 justify-between items-center">
-				<h2 class="text-blue-400 font-bold flex items-center gap-2">
-					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
-					ENVIAR
-				</h2>
-				
-				<div class="flex gap-2 flex-wrap justify-end">
-					<select id="txFreqBase" class="bg-gray-900 text-xs border border-gray-600 rounded px-2 py-1 outline-none text-gray-300 focus:border-blue-500">
-						<option value="1000">1.0 kHz (Teste)</option>
-						<option value="3000">3.0 kHz (Estável)</option>
-						<option value="5000">5.0 kHz</option>
-						<option value="6000">6.0 kHz</option>
-						<option value="9000">9.0 kHz (Alta Fid.)</option>
-						<option value="12000">12.0 kHz</option>
-						<option value="15000">15.0 kHz</option>
-						<option value="19000">19.0 kHz (Ultrassom)</option>
-					</select>
+			<!-- Controles TX (Expansível/Compacto) -->
+			<div class="bg-gray-900 rounded-2xl p-4 border border-gray-800 shadow-xl">
+				<div class="flex justify-between items-center mb-4">
+					<h2 class="text-blue-400 text-xs font-bold tracking-widest uppercase flex items-center gap-2">
+						<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+						Transmissor
+					</h2>
 					
-					<select id="txSpeed" class="bg-gray-900 text-xs border border-gray-600 rounded px-2 py-1 outline-none text-gray-300 focus:border-blue-500">
-						<option value="100">100ms (Lento)</option>
-						<option value="60">60ms (Rápido)</option>
-						<option value="30">30ms (Turbo 19kHz)</option>
-					</select>
-				</div>
-			</div>
-			
-			<div class="p-4 flex flex-col gap-4">
-				<div>
-					<label class="text-xs text-gray-400 font-bold mb-2 block uppercase">Mensagem</label>
-					<textarea id="txInput" rows="2" class="w-full bg-gray-800 border-2 border-gray-700 rounded p-3 text-white focus:border-blue-500 outline-none transition resize-none text-lg placeholder-gray-600" placeholder="Digite para enviar..."></textarea>
-				</div>
-				
-				<button id="btnSend" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-lg shadow-lg shadow-blue-900/40 transition active:scale-95 flex justify-center items-center gap-2 touch-manipulation">
-					<span>TRANSMITIR</span>
-					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path></svg>
-				</button>
-				
-				<!-- Status Visual TX -->
-				<div class="bg-black rounded p-2 font-mono text-xs border border-gray-700 h-24 overflow-hidden relative">
-					<div class="text-gray-500 border-b border-gray-800 mb-1 pb-1 flex justify-between">
-						<span>TX MONITOR</span>
-						<span id="txStatus" class="text-gray-400">IDLE</span>
+					<div class="flex gap-2">
+						<!-- Configs simplificadas visualmente -->
+						<select id="txSpeed" class="bg-gray-800 text-xs font-mono text-gray-300 rounded-lg px-2 py-1.5 border border-gray-700 outline-none focus:border-blue-500">
+							<option value="100">100ms</option>
+							<option value="60">60ms</option>
+							<option value="30">30ms</option>
+						</select>
+						<select id="txFreqBase" class="bg-gray-800 text-xs font-mono text-gray-300 rounded-lg px-2 py-1.5 border border-gray-700 outline-none focus:border-blue-500 w-20">
+							<option value="1000">1k</option>
+							<option value="3000">3k</option>
+							<option value="5000">5k</option>
+							<option value="9000">9k</option>
+							<option value="15000">15k</option>
+							<option value="19000">19k</option>
+						</select>
 					</div>
-					<div id="txVisualizer" class="flex flex-wrap gap-1 opacity-80 pb-2"></div>
 				</div>
-			</div>
-		</section>
-		
-		<!-- SEÇÃO RECEPTOR -->
-		<section class="flex-grow flex flex-col relative bg-black min-h-[400px]">
-			<div class="absolute top-0 right-0 w-1 h-full bg-green-600/20"></div>
-			
-			<div class="p-4 border-b border-gray-700 bg-gray-800/50 flex flex-wrap gap-2 justify-between items-center z-10 sticky top-0">
-				<h2 class="text-green-400 font-bold flex items-center gap-2">
-					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
-					RECEBER
-				</h2>
-				<div class="flex gap-2 items-center flex-wrap justify-end">
-					<!-- ADDED: Seletor de Velocidade no RX -->
-					<select id="rxSpeed" class="bg-gray-900 text-xs border border-gray-600 rounded px-2 py-1 outline-none text-gray-300 focus:border-green-500">
-						<option value="100">100ms</option>
-						<option value="60">60ms</option>
-						<option value="30">30ms (Turbo)</option>
-					</select>
-					
-					<select id="rxFreqBase" class="bg-gray-900 text-xs border border-gray-600 rounded px-2 py-1 outline-none text-gray-300 focus:border-green-500">
-						<option value="1000">1.0 kHz</option>
-						<option value="3000">3.0 kHz</option>
-						<option value="5000">5.0 kHz</option>
-						<option value="6000">6.0 kHz</option>
-						<option value="9000">9.0 kHz</option>
-						<option value="12000">12.0 kHz</option>
-						<option value="15000">15.0 kHz</option>
-						<option value="19000">19.0 kHz</option>
-					</select>
-					<button id="btnListen" class="bg-green-600 hover:bg-green-500 text-white text-xs px-3 py-2 rounded-lg font-bold transition whitespace-nowrap touch-manipulation">
-						LIGAR MIC
+				
+				<!-- Área de Input -->
+				<div class="relative group">
+					<textarea id="txInput" rows="2" class="w-full bg-gray-950 border-2 border-gray-800 rounded-xl p-4 text-white focus:border-blue-600 outline-none transition-all resize-none text-lg placeholder-gray-600 leading-relaxed font-mono" placeholder="Digite mensagem..."></textarea>
+					<div class="absolute bottom-2 right-2 text-[10px] text-gray-600 font-mono" id="charCount">0 chars</div>
+				</div>
+				
+				<!-- Botão e Progresso -->
+				<div class="mt-4 flex flex-col gap-2">
+					<button id="btnSend" class="w-full bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-900/20 transition-all active:scale-[0.98] flex justify-center items-center gap-2 touch-manipulation disabled:opacity-50 disabled:cursor-not-allowed">
+						<span id="btnText">ENVIAR AGORA</span>
+						<svg id="btnIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
 					</button>
-				</div>
-			</div>
-			
-			<!-- Terminal de Saída -->
-			<div class="flex-grow p-4 flex flex-col relative overflow-hidden">
-				<div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9IiMzMzMiLz48L3N2Zz4=')] opacity-20 pointer-events-none"></div>
-				<div class="relative z-10 flex flex-col h-full gap-4">
-					<div class="flex justify-between items-center">
-						<label class="text-xs text-green-700 font-bold uppercase">Chat Recebido</label>
-						<span id="rxStateIndicator" class="text-xs text-gray-500 font-mono">OFFLINE</span>
-					</div>
-					<div id="rxTerminal" class="flex-grow bg-gray-900/80 border border-green-900/50 rounded-lg p-4 font-mono text-xl text-green-400 shadow-[inset_0_0_20px_rgba(0,0,0,0.8)] overflow-y-auto whitespace-pre-wrap break-words leading-relaxed min-h-[200px]">
-						<span class="animate-pulse text-green-700">_</span>
-					</div>
-					<!-- Debug Visual Compacto -->
-					<div class="h-20 bg-gray-900 rounded border border-gray-700 relative overflow-hidden flex items-end shrink-0">
-						<canvas id="spectrumCanvas" class="w-full h-full opacity-60"></canvas>
-						<div class="absolute top-2 right-2 text-[10px] text-gray-500 font-mono bg-black/50 px-2 rounded">
-							SINAL: <span id="debugLevel" class="text-white">0</span>
+					
+					<!-- Barra de Progresso (Escondida por padrão) -->
+					<div id="txProgressContainer" class="hidden transition-all duration-300 ease-out">
+						<div class="flex justify-between text-[10px] font-bold text-blue-400 mb-1 px-1">
+							<span class="animate-pulse">TRANSMITINDO...</span>
+							<span id="txPercentText">0%</span>
+						</div>
+						<div class="w-full h-3 bg-gray-800 rounded-full overflow-hidden border border-gray-700">
+							<div id="txProgressBar" class="h-full bg-gradient-to-r from-blue-600 to-cyan-400 transition-all duration-100 ease-linear w-0"></div>
 						</div>
 					</div>
 				</div>
+				
+				<!-- Monitor Visual Minimalista -->
+				<div class="mt-4 bg-black/40 rounded-lg p-2 h-12 overflow-hidden border border-gray-800/50 flex items-center justify-center">
+					<div id="txVisualizer" class="flex flex-wrap gap-0.5 opacity-60 justify-center w-full"></div>
+				</div>
+			</div>
+		</section>
+		
+		<!-- Divisor decorativo -->
+		<div class="flex items-center gap-4 px-8 py-2 opacity-30">
+			<div class="h-px bg-gray-500 flex-grow"></div>
+			<div class="text-[10px] uppercase tracking-widest text-gray-400">Canal de Áudio</div>
+			<div class="h-px bg-gray-500 flex-grow"></div>
+		</div>
+		
+		<!-- SEÇÃO RECEPTOR -->
+		<section class="flex-grow p-4 pt-0">
+			<div class="bg-gray-900 rounded-2xl p-4 border border-gray-800 shadow-xl min-h-[300px] flex flex-col">
+				
+				<!-- Header RX -->
+				<div class="flex justify-between items-center mb-4">
+					<h2 class="text-green-400 text-xs font-bold tracking-widest uppercase flex items-center gap-2">
+						<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
+						Receptor
+					</h2>
+					<div class="flex gap-2">
+						<!-- Configs RX sincronizadas visualmente -->
+						<select id="rxSpeed" class="bg-gray-800 text-xs font-mono text-gray-300 rounded-lg px-2 py-1.5 border border-gray-700 outline-none focus:border-green-500">
+							<option value="100">100ms</option>
+							<option value="60">60ms</option>
+							<option value="30">30ms</option>
+						</select>
+						<select id="rxFreqBase" class="bg-gray-800 text-xs font-mono text-gray-300 rounded-lg px-2 py-1.5 border border-gray-700 outline-none focus:border-green-500 w-20">
+							<option value="1000">1k</option>
+							<option value="3000">3k</option>
+							<option value="5000">5k</option>
+							<option value="9000">9k</option>
+							<option value="15000">15k</option>
+							<option value="19000">19k</option>
+						</select>
+					</div>
+				</div>
+				
+				<!-- Botão Ligar Mic (Grande se desligado) -->
+				<div id="rxStartOverlay" class="flex flex-col items-center justify-center py-8 text-center">
+					<p class="text-gray-500 text-sm mb-4">Toque para começar a ouvir</p>
+					<button id="btnListen" class="w-16 h-16 rounded-full bg-green-600 hover:bg-green-500 shadow-[0_0_20px_rgba(34,197,94,0.3)] flex items-center justify-center transition-transform active:scale-90">
+						<svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
+					</button>
+				</div>
+				
+				<!-- Área de Mensagens (Estilo Chat) -->
+				<div id="rxChatArea" class="hidden flex-grow flex flex-col gap-3 overflow-y-auto max-h-[300px] mb-4 p-2 bg-black/20 rounded-xl inner-shadow">
+					<div class="text-center text-[10px] text-gray-600 my-2">-- Aguardando Sinal --</div>
+					<!-- Mensagens dinâmicas aqui -->
+					<div id="rxTerminal" class="font-mono text-lg text-green-400 break-words leading-relaxed whitespace-pre-wrap"></div>
+				</div>
+				
+				<!-- Visualizador Espectro -->
+				<div id="rxVisualizerContainer" class="hidden h-16 bg-gray-950 rounded-xl border border-gray-800 relative overflow-hidden flex items-end">
+					<canvas id="spectrumCanvas" class="w-full h-full opacity-50"></canvas>
+					<div class="absolute top-1 right-2 text-[9px] font-mono text-gray-500 bg-black/60 px-1.5 py-0.5 rounded">
+						PWR: <span id="debugLevel" class="text-green-400">0</span>
+					</div>
+				</div>
+				
 			</div>
 		</section>
 	</main>
+	
 	<script src="script.js"></script>
 </body>
 </html>

@@ -1,12 +1,32 @@
- // --- CONFIGURAÇÃO ---
- const SHIFT = 400; // Bit 1 = Base + 400Hz
- // --- TRANSMISSOR (TX) ---
- const TX = {
+// --- CONSTANTES & UTILITÁRIOS ---
+const SHIFT = 400; // Bit 1 = Base + 400Hz
+
+// Helper para UI
+const setGlobalStatus = (text, type = 'neutral') => {
+	const elText = document.getElementById('globalStatusText');
+	const elDot = document.getElementById('globalStatusDot');
+	elText.innerText = text;
+	
+	elDot.className = 'w-1.5 h-1.5 rounded-full ';
+	if(type === 'active') elDot.classList.add('bg-green-500', 'animate-pulse');
+	else if(type === 'busy') elDot.classList.add('bg-blue-500', 'animate-pulse');
+	else if(type === 'error') elDot.classList.add('bg-red-500');
+	else elDot.classList.add('bg-gray-500');
+};
+
+document.getElementById('txInput').addEventListener('input', (e) => {
+	document.getElementById('charCount').innerText = `${e.target.value.length} chars`;
+});
+
+// --- TRANSMISSOR (TX) ---
+const TX = {
 	ctx: null,
 	isSending: false,
+	
 	init: () => {
 		if (!TX.ctx) TX.ctx = new (window.AudioContext || window.webkitAudioContext)();
 	},
+	
 	playTone: (freq, startTime, duration) => {
 		const osc = TX.ctx.createOscillator();
 		const gain = TX.ctx.createGain();
@@ -14,72 +34,115 @@
 		osc.frequency.value = freq;
 		osc.connect(gain);
 		gain.connect(TX.ctx.destination);
-		// Envelope suave
+		
+		// Envelope suave (Fade in/out rápido para evitar cliques)
 		gain.gain.setValueAtTime(0, startTime);
-		gain.gain.linearRampToValueAtTime(1, startTime + 0.01);
-		gain.gain.setValueAtTime(1, startTime + duration - 0.01);
+		gain.gain.linearRampToValueAtTime(1, startTime + 0.005); 
+		gain.gain.setValueAtTime(1, startTime + duration - 0.005);
 		gain.gain.linearRampToValueAtTime(0, startTime + duration);
+		
 		osc.start(startTime);
-		osc.stop(startTime + duration + 0.05);
+		osc.stop(startTime + duration + 0.02);
 	},
+	
 	send: async (text) => {
 		TX.init();
 		if (TX.ctx.state === 'suspended') await TX.ctx.resume();
 		if (TX.isSending) return;
 		TX.isSending = true;
-		// Capturar configurações do momento do clique
+		
+		// UI Start
+		setGlobalStatus("ENVIANDO...", "busy");
+		const btn = document.getElementById('btnSend');
+		const btnText = document.getElementById('btnText');
+		const btnIcon = document.getElementById('btnIcon');
+		const progressContainer = document.getElementById('txProgressContainer');
+		const progressBar = document.getElementById('txProgressBar');
+		const progressPercent = document.getElementById('txPercentText');
+		
+		btn.disabled = true;
+		btn.classList.add('opacity-50');
+		btnText.innerText = "TRANSMITINDO...";
+		btnIcon.classList.add('hidden'); // Ocultar ícone
+		progressContainer.classList.remove('hidden');
+		progressBar.style.width = '0%';
+		
+		// Config
 		const txBaseFreq = parseInt(document.getElementById('txFreqBase').value);
 		const bitLen = parseInt(document.getElementById('txSpeed').value);
 		const bitSec = bitLen / 1000;
-		const btn = document.getElementById('btnSend');
-		const originalText = btn.innerHTML;
-		btn.innerHTML = `<span class="animate-spin">↻</span> ENVIANDO...`;
-		btn.classList.add('bg-red-600', 'cursor-not-allowed');
-		// Limpar visualizador TX
-		const vis = document.getElementById('txVisualizer');
-		vis.innerHTML = '';
-		// Agendar áudio
-		let now = TX.ctx.currentTime + 0.5;
-		// Funções locais de frequência baseadas na escolha do TX
+		
 		const getFreq1 = () => txBaseFreq + SHIFT;
 		const getFreq0 = () => txBaseFreq;
-		for (let i = 0; i < text.length; i++) {
+		
+		let now = TX.ctx.currentTime + 0.2;
+		const totalChars = text.length;
+		
+		// Limpar visualizador
+		document.getElementById('txVisualizer').innerHTML = '';
+		
+		for (let i = 0; i < totalChars; i++) {
 			const charCode = text.charCodeAt(i);
-			// Start Bit (Sempre 1)
+			
+			// Start Bit (1)
 			TX.playTone(getFreq1(), now, bitSec);
-			TX.addVis(1, "START");
+			TX.addVis(1);
 			now += bitSec;
-			// 8 Bits de Dados
+			
+			// 8 Data Bits
 			for (let b = 0; b < 8; b++) {
 				const bit = (charCode >> (7 - b)) & 1;
-				const freq = bit === 1 ? getFreq1() : getFreq0();
-				TX.playTone(freq, now, bitSec);
-				TX.addVis(bit, bit);
+				TX.playTone(bit ? getFreq1() : getFreq0(), now, bitSec);
+				TX.addVis(bit);
 				now += bitSec;
 			}
-			// Gap
+			
+			// Gap/Stop
 			now += (bitSec * 2);
-			TX.addVis('gap', 'GAP');
+			TX.addVis(null); // Spacer
+			
+			// Update UI Progress Loop
+			// Usamos setTimeout sincronizado com o tempo de áudio estimado para atualizar a barra visualmente
+			const timeUntilCharFinish = (now - TX.ctx.currentTime) * 1000;
+			setTimeout(() => {
+				const pct = Math.round(((i + 1) / totalChars) * 100);
+				progressBar.style.width = `${pct}%`;
+				progressPercent.innerText = `${pct}%`;
+			}, timeUntilCharFinish);
 		}
-		const totalTime = (now - TX.ctx.currentTime) * 1000;
+		
+		// Finish
+		const totalTimeMs = (now - TX.ctx.currentTime) * 1000;
 		setTimeout(() => {
 			TX.isSending = false;
-			btn.innerHTML = originalText;
-			btn.classList.remove('bg-red-600', 'cursor-not-allowed');
-		}, totalTime);
+			btn.disabled = false;
+			btn.classList.remove('opacity-50');
+			btnText.innerText = "ENVIAR AGORA";
+			btnIcon.classList.remove('hidden');
+			setGlobalStatus("STANDBY");
+			
+			// Esconder barra após 1s
+			setTimeout(() => {
+				progressContainer.classList.add('hidden');
+				progressBar.style.width = '0%';
+			}, 1000);
+			
+		}, totalTimeMs);
 	},
-	addVis: (type, label) => {
+	
+	addVis: (bit) => {
 		const vis = document.getElementById('txVisualizer');
 		const el = document.createElement('div');
-		el.className = `w-4 h-6 flex items-center justify-center text-[8px] rounded shrink-0 mb-1 ${
-			type === 1 ? 'bg-green-600 text-white' : 
-			type === 0 ? 'bg-blue-600 text-white' : 'bg-gray-800 text-gray-600 w-2'
-		}`;
-		if(type !== 'gap') el.innerText = label === "START" ? "S" : label;
+		if (bit === null) {
+			el.className = 'w-0.5 h-3 bg-gray-700/50';
+		} else {
+			el.className = `w-1.5 h-3 rounded-full ${bit ? 'bg-green-500' : 'bg-blue-600'}`;
+		}
 		vis.appendChild(el);
-		vis.scrollTop = vis.scrollHeight;
+		if(vis.children.length > 30) vis.removeChild(vis.firstChild);
 	}
 };
+
 // --- RECEPTOR (RX) ---
 const RX = {
 	ctx: null,
@@ -90,137 +153,161 @@ const RX = {
 	bits: [],
 	syncTime: 0,
 	armed: false,
-	threshold: 40,
+	threshold: 40, // Sensibilidade
+	
 	start: async () => {
 		try {
 			RX.ctx = new (window.AudioContext || window.webkitAudioContext)();
 			RX.analyser = RX.ctx.createAnalyser();
 			RX.analyser.fftSize = 1024;
-			RX.analyser.smoothingTimeConstant = 0.2;
+			RX.analyser.smoothingTimeConstant = 0.3;
+			
 			const stream = await navigator.mediaDevices.getUserMedia({ 
 				audio: { echoCancellation: false, autoGainControl: false, noiseSuppression: false } 
 			});
 			const source = RX.ctx.createMediaStreamSource(stream);
 			source.connect(RX.analyser);
+			
 			RX.isActive = true;
 			RX.buffer = new Uint8Array(RX.analyser.frequencyBinCount);
-			document.getElementById('btnListen').innerText = "OUVINDO...";
-			document.getElementById('btnListen').classList.replace('bg-green-600', 'bg-red-500');
-			document.getElementById('rxStateIndicator').innerText = "AGUARDANDO SINAL...";
-			document.getElementById('rxStateIndicator').classList.add('animate-pulse');
+			
+			// UI Transitions
+			document.getElementById('rxStartOverlay').classList.add('hidden');
+			document.getElementById('rxChatArea').classList.remove('hidden');
+			document.getElementById('rxVisualizerContainer').classList.remove('hidden');
+			setGlobalStatus("MICROFONE LIGADO", "active");
+			
 			RX.loop();
 		} catch (err) {
-			alert("Erro Mic: " + err);
+			alert("Erro ao acessar microfone. Verifique as permissões.");
 		}
 	},
+	
 	getBinEnergy: (targetFreq) => {
 		const nyquist = RX.ctx.sampleRate / 2;
 		const index = Math.round((targetFreq / nyquist) * RX.analyser.frequencyBinCount);
 		let sum = 0;
+		// Média de 3 bins
 		for(let i = -1; i <= 1; i++) sum += RX.buffer[index + i] || 0;
 		return sum / 3;
 	},
+	
 	loop: () => {
 		if (!RX.isActive) return;
 		requestAnimationFrame(RX.loop);
+		
 		RX.analyser.getByteFrequencyData(RX.buffer);
-		// Config dinâmica baseada no seletor RX
+		
 		const rxBaseFreq = parseInt(document.getElementById('rxFreqBase').value);
+		const currentBitLen = parseInt(document.getElementById('rxSpeed').value) || 100;
+		
 		const freq0 = rxBaseFreq;
 		const freq1 = rxBaseFreq + SHIFT;
-		// Desenhar
-		RX.drawDebug(freq0, freq1);
-		const energy0 = RX.getBinEnergy(freq0);
-		const energy1 = RX.getBinEnergy(freq1);
-		const maxEnergy = Math.max(energy0, energy1);
 		
-		// --- AJUSTE DINÂMICO DE VELOCIDADE NO RX ---
-		// MODIFIED: Agora lê do seletor rxSpeed
-		let currentBitLen = parseInt(document.getElementById('rxSpeed').value) || 100;
+		RX.drawDebug(freq0, freq1);
+		
+		const e0 = RX.getBinEnergy(freq0);
+		const e1 = RX.getBinEnergy(freq1);
+		const maxEnergy = Math.max(e0, e1);
 		
 		const now = performance.now();
-		// Máquina de Estados RX
+		
+		// State Machine
 		if (RX.state === 'IDLE') {
 			if (maxEnergy < RX.threshold) RX.armed = true;
-			if (RX.armed && energy1 > RX.threshold && energy1 > energy0 + 20) {
+			// Detect Start Bit (High/Freq1)
+			if (RX.armed && e1 > RX.threshold && e1 > e0 + 15) {
 				RX.state = 'READING';
 				RX.syncTime = now;
 				RX.bits = [];
 				RX.armed = false;
-				
-				document.getElementById('rxStateIndicator').innerText = "RECEBENDO...";
-				document.getElementById('rxStateIndicator').className = "text-green-400 font-bold";
+				setGlobalStatus("RECEBENDO DADOS...", "active");
 			}
 		}
 		else if (RX.state === 'READING') {
 			const bitsLidos = RX.bits.length;
+			// Sample no meio do bit
 			const sampleTime = RX.syncTime + (currentBitLen * (1 + bitsLidos)) + (currentBitLen * 0.5);
+			
 			if (now >= sampleTime) {
 				let bit = 0;
 				if (maxEnergy >= RX.threshold) {
-					bit = energy1 > energy0 ? 1 : 0;
+					bit = e1 > e0 ? 1 : 0;
 				}
 				RX.bits.push(bit);
+				
 				if (RX.bits.length === 8) {
 					RX.processChar();
 					RX.state = 'COOLDOWN';
-					RX.cooldownEnd = now + currentBitLen; 
+					RX.cooldownEnd = now + currentBitLen;
 				}
 			}
 		}
 		else if (RX.state === 'COOLDOWN') {
 			if (now > RX.cooldownEnd) {
 				RX.state = 'IDLE';
-				document.getElementById('rxStateIndicator').innerText = "AGUARDANDO...";
-				document.getElementById('rxStateIndicator').className = "text-gray-500 animate-pulse";
+				setGlobalStatus("MICROFONE LIGADO", "active");
 			}
 		}
 	},
+	
 	processChar: () => {
 		let charCode = 0;
 		RX.bits.forEach(bit => { charCode = (charCode << 1) | bit; });
+		
+		// Filtro ASCII básico
 		if ((charCode >= 32 && charCode <= 126) || charCode === 10 || charCode === 13) {
 			const char = String.fromCharCode(charCode);
 			const term = document.getElementById('rxTerminal');
-			let currentText = term.innerText;
-			if (currentText.endsWith('_')) currentText = currentText.slice(0, -1);
-			term.innerText = currentText + char + "_";
-			term.scrollTop = term.scrollHeight;
-			term.classList.remove('char-received');
-			void term.offsetWidth;
-			term.classList.add('char-received');
+			term.textContent += char;
+			
+			// Auto scroll
+			const chatArea = document.getElementById('rxChatArea');
+			chatArea.scrollTop = chatArea.scrollHeight;
+			
+			// Visual feedback
+			term.classList.add('text-white');
+			setTimeout(() => term.classList.remove('text-white'), 100);
 		}
 	},
+	
 	drawDebug: (f0, f1) => {
 		const cvs = document.getElementById('spectrumCanvas');
 		const ctx = cvs.getContext('2d');
+		// Resize if needed
+		if(cvs.width !== cvs.offsetWidth) {
+			cvs.width = cvs.offsetWidth;
+			cvs.height = cvs.offsetHeight;
+		}
+		
 		const w = cvs.width;
 		const h = cvs.height;
-		ctx.fillStyle = 'rgba(0,0,0,0.2)';
+		
+		ctx.fillStyle = 'rgba(2, 6, 23, 0.3)'; // Fade effect
 		ctx.fillRect(0, 0, w, h);
-		const barW = (w / RX.buffer.length) * 2;
+		
+		const barW = (w / RX.buffer.length) * 3; // Zoom um pouco
 		let x = 0;
+		
 		for(let i=0; i<RX.buffer.length; i++) {
 			const v = RX.buffer[i];
-			ctx.fillStyle = `rgb(0, ${v}, 0)`;
-			ctx.fillRect(x, h - (v/2), barW, v/2);
+			if(v > 10) {
+				ctx.fillStyle = `rgba(34, 197, 94, ${v/255})`;
+				ctx.fillRect(x, h - (v/3), barW, v/3);
+			}
 			x += barW;
 		}
-		const e0 = RX.getBinEnergy(f0);
-		const e1 = RX.getBinEnergy(f1);
-		document.getElementById('debugLevel').innerText = `L:${e0.toFixed(0)} / H:${e1.toFixed(0)}`;
+		
+		const eMax = Math.max(RX.getBinEnergy(f0), RX.getBinEnergy(f1));
+		document.getElementById('debugLevel').innerText = eMax.toFixed(0);
 	}
 };
+
 // --- BINDINGS ---
 window.onload = () => {
 	document.getElementById('btnSend').onclick = () => {
 		const txt = document.getElementById('txInput').value;
 		if(txt) TX.send(txt);
 	};
-	
 	document.getElementById('btnListen').onclick = RX.start;
-	
-	const cvs = document.getElementById('spectrumCanvas');
-	cvs.width = cvs.offsetWidth;
-	cvs.height = cvs.offsetHeight;
 };
