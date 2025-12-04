@@ -316,8 +316,32 @@ const RX = {
 	}
 };
 
+// --- PERSISTÊNCIA ---
+const CONFIG_KEYS = ['txSpeed', 'txFreqBase', 'rxSpeed', 'rxFreqBase'];
+
+const saveConfig = () => {
+	CONFIG_KEYS.forEach(id => {
+		const val = document.getElementById(id).value;
+		localStorage.setItem(`radin_${id}`, val);
+	});
+};
+
+const loadConfig = () => {
+	CONFIG_KEYS.forEach(id => {
+		const val = localStorage.getItem(`radin_${id}`);
+		if (val) document.getElementById(id).value = val;
+	});
+};
+
 // --- BINDINGS ---
 window.onload = () => {
+	loadConfig(); // Carrega configs ao iniciar
+	
+	// Salva configs ao mudar
+	CONFIG_KEYS.forEach(id => {
+		document.getElementById(id).addEventListener('change', saveConfig);
+	});
+	
 	document.getElementById('btnSend').onclick = () => {
 		const txt = document.getElementById('txInput').value;
 		if(txt) TX.send(txt);
