@@ -5,9 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 	<title>Radin de Som</title>
 	<script src="https://cdn.tailwindcss.com"></script>
-	<style>
-		
-	</style>
+	<link rel="stylesheet" href="style.css">
 </head>
 <body class="bg-gray-950 text-gray-100 min-h-screen flex flex-col overflow-y-auto selection:bg-green-500/30">
 	
@@ -136,8 +134,8 @@
 				<!-- Área de Mensagens (Estilo Chat) -->
 				<div id="rxChatArea" class="hidden flex-grow flex flex-col gap-3 overflow-y-auto max-h-[300px] mb-4 p-2 bg-black/20 rounded-xl inner-shadow">
 					<div class="text-center text-[10px] text-gray-600 my-2">-- Aguardando Sinal --</div>
-					<!-- Mensagens dinâmicas aqui -->
-					<div id="rxTerminal" class="font-mono text-lg text-green-400 break-words leading-relaxed whitespace-pre-wrap"></div>
+					<!-- Container onde os balões serão adicionados -->
+					<div id="rxMessagesContainer" class="flex flex-col gap-2 p-2"></div>
 				</div>
 				
 				<!-- Visualizador Espectro -->

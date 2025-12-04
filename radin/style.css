@@ -1,14 +1,14 @@
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
-
-body { font-family: 'Inter', sans-serif; } /* Fonte UI principal */
-.font-mono { font-family: 'JetBrains Mono', monospace; } /* Para dados/terminal */
-
-canvas { image-rendering: pixelated; }
-
-/* Animação suave para itens novos */
-@keyframes slideIn {
+ @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+ @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+ 
+ body { font-family: 'Inter', sans-serif; } /* Fonte UI principal */
+ .font-mono { font-family: 'JetBrains Mono', monospace; } /* Para dados/terminal */
+ 
+ canvas { image-rendering: pixelated; }
+ 
+ /* Animação suave para itens novos */
+ @keyframes slideIn {
 	from { opacity: 0; transform: translateY(5px); }
 	to { opacity: 1; transform: translateY(0); }
 }
-.msg-new { animation: slideIn 0.3s ease-out; }
+.msg-bubble { animation: slideIn 0.3s ease-out; }

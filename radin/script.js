@@ -155,6 +155,10 @@ const RX = {
 	armed: false,
 	threshold: 40, // Sensibilidade
 	
+	// New Session Logic
+	lastCharTime: 0,
+	currentBubble: null,
+	
 	start: async () => {
 		try {
 			RX.ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -258,16 +262,25 @@ const RX = {
 		// Filtro ASCII básico
 		if ((charCode >= 32 && charCode <= 126) || charCode === 10 || charCode === 13) {
 			const char = String.fromCharCode(charCode);
-			const term = document.getElementById('rxTerminal');
-			term.textContent += char;
+			const now = Date.now();
+			const container = document.getElementById('rxMessagesContainer');
+			
+			// Lógica de nova sessão/balão
+			// Se passou mais de 2 segundos desde o último caractere, cria novo balão
+			if (now - RX.lastCharTime > 2000 || !RX.currentBubble) {
+				const bubble = document.createElement('div');
+				bubble.className = "msg-bubble bg-green-900/30 border border-green-800/50 p-3 rounded-xl rounded-tl-none self-start max-w-[90%] break-words shadow-sm font-mono text-green-400 text-lg leading-relaxed";
+				container.appendChild(bubble);
+				RX.currentBubble = bubble;
+			}
+			
+			// Adicionar char ao balão atual
+			RX.currentBubble.textContent += char;
+			RX.lastCharTime = now;
 			
 			// Auto scroll
 			const chatArea = document.getElementById('rxChatArea');
 			chatArea.scrollTop = chatArea.scrollHeight;
-			
-			// Visual feedback
-			term.classList.add('text-white');
-			setTimeout(() => term.classList.remove('text-white'), 100);
 		}
 	},
 	
