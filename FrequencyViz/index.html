@@ -74,7 +74,7 @@
     </div>
 
     <script>
-        const BANDS = 12; 
+        const BANDS = 20; 
         const leftContainer = document.getElementById('col-left');
         const rightContainer = document.getElementById('col-right');
         
@@ -157,7 +157,7 @@
                 
                 // Smoothing menor (0.7) para ser mais "rápido" e responder a batidas secas
                 // Se quiser mais suave, aumente para 0.85
-                analyser.smoothingTimeConstant = 0.75; 
+                analyser.smoothingTimeConstant = 0.7; 
 
                 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
                 const source = audioCtx.createMediaStreamSource(stream);
