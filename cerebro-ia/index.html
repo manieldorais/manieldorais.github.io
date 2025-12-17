@@ -9,19 +9,22 @@
     
     <style>
         :root {
+            /* Cores */
             --bg-body: #0e0e0e;
             --bg-sidebar: #171717;
-            --bg-chat: #0e0e0e;
             --bg-input: #1e1e1e;
-            --bg-msg-user: #2a2a2a;
+            
+            /* Balões */
+            --bg-msg-user: #262626; /* Cinza levemente mais claro para o User */
             --bg-msg-ia: transparent;
+            
             --text-primary: #e3e3e3;
             --text-secondary: #9ca3af;
+            
             --accent-color: #7c3aed;
-            --accent-glow: #7c3aed40;
+            --accent-glow: rgba(124, 58, 237, 0.3);
             --border-color: #333;
-            --radius-lg: 16px;
-            --radius-md: 8px;
+            --radius-md: 12px;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
@@ -30,8 +33,7 @@
             font-family: 'Outfit', sans-serif;
             background-color: var(--bg-body);
             color: var(--text-primary);
-            /* Usa dvh para descontar as barras do navegador mobile */
-            height: 100dvh; 
+            height: 100dvh; /* Altura dinâmica para mobile */
             display: flex;
             overflow: hidden;
             position: relative;
@@ -50,7 +52,7 @@
 
         .sidebar-header {
             padding: 20px;
-            padding-top: max(20px, env(safe-area-inset-top)); /* Notch support */
+            padding-top: max(20px, env(safe-area-inset-top));
             display: flex;
             align-items: center;
             gap: 10px;
@@ -60,44 +62,32 @@
         }
 
         .logo-icon {
-            width: 24px;
-            height: 24px;
+            width: 24px; height: 24px;
             background: linear-gradient(135deg, #7c3aed, #2563eb);
             border-radius: 50%;
             box-shadow: 0 0 10px var(--accent-glow);
         }
 
         .new-chat-btn {
-            margin: 15px;
-            padding: 12px;
+            margin: 15px; padding: 12px;
             background-color: var(--bg-input);
             border: 1px solid var(--border-color);
             color: var(--text-primary);
             border-radius: 50px;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 0.9rem;
+            display: flex; align-items: center; gap: 10px; font-size: 0.9rem;
         }
 
         .history-list {
-            flex: 1;
-            overflow-y: auto;
-            padding: 10px 15px;
-            -webkit-overflow-scrolling: touch; /* Scroll suave no iOS */
+            flex: 1; overflow-y: auto; padding: 10px 15px;
+            -webkit-overflow-scrolling: touch;
         }
 
         .history-item {
-            padding: 12px;
-            margin-bottom: 5px;
-            border-radius: var(--radius-md);
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            cursor: pointer;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            padding: 12px; margin-bottom: 5px;
+            border-radius: 8px; color: var(--text-secondary);
+            font-size: 0.9rem; cursor: pointer;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
             position: relative;
         }
         .history-item.active { background-color: #2a2a2a; color: var(--text-primary); font-weight: 500; }
@@ -108,88 +98,109 @@
         }
         .history-item.active .delete-chat { display: block; }
 
-        /* Overlay para mobile quando menu abre */
         .sidebar-overlay {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.6); z-index: 15;
+            background: rgba(0,0,0,0.7); z-index: 15;
             opacity: 0; pointer-events: none; transition: opacity 0.3s;
             backdrop-filter: blur(2px);
         }
 
-        /* --- MAIN CHAT --- */
+        /* --- MAIN AREA --- */
         main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            height: 100dvh; /* Garante altura total */
+            flex: 1; display: flex; flex-direction: column; position: relative; height: 100dvh;
         }
 
         .mobile-header {
-            display: none;
-            padding: 15px;
+            display: none; padding: 15px;
             padding-top: max(15px, env(safe-area-inset-top));
             background: var(--bg-sidebar);
-            align-items: center;
-            justify-content: space-between;
+            align-items: center; justify-content: space-between;
             border-bottom: 1px solid var(--border-color);
         }
 
         #chat-container {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px 5%;
-            padding-bottom: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
+            flex: 1; overflow-y: auto;
+            padding: 20px 5%; padding-bottom: 10px;
+            display: flex; flex-direction: column; gap: 20px;
             scroll-behavior: smooth;
             -webkit-overflow-scrolling: touch;
         }
 
-        .message-wrapper { display: flex; gap: 12px; animation: slideUp 0.3s ease; }
-        
-        .avatar {
-            width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 0.75rem; font-weight: bold;
+        /* --- MENSAGENS (Ajuste Direita/Esquerda) --- */
+        .message-wrapper {
+            display: flex;
+            gap: 12px;
+            width: 100%;
+            animation: slideUp 0.3s ease;
         }
-        .avatar.user { background-color: #333; }
+
+        /* User: Direita (Inverte ordem) */
+        .message-wrapper.user {
+            flex-direction: row-reverse;
+        }
+
+        /* IA: Esquerda (Normal) */
+        .message-wrapper.ia {
+            flex-direction: row;
+        }
+        
+        /* Avatar */
+        .avatar {
+            width: 32px; height: 32px; border-radius: 50%;
+            flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+            font-size: 0.7rem; font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .avatar.user { background-color: #444; color: #fff; }
         .avatar.ia { background: linear-gradient(135deg, #7c3aed, #2563eb); }
 
+        /* Conteúdo do Texto */
         .message-content {
-            line-height: 1.5; font-size: 1rem; max-width: 100%; word-break: break-word;
+            line-height: 1.5; font-size: 1rem;
+            max-width: 85%; word-break: break-word;
+            padding: 10px 16px;
+            position: relative;
         }
-        .message-content.user {
-            background-color: var(--bg-msg-user); padding: 10px 16px;
-            border-radius: 18px 18px 4px 18px; max-width: 85%;
-        }
-        .message-content strong { color: #fff; font-weight: 600; }
-        .message-content code { background: #333; padding: 2px 4px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 0.9em; }
 
-        /* --- INPUT AREA --- */
+        /* Estilo Balão USER */
+        .message-content.user {
+            background-color: var(--bg-msg-user);
+            color: #fff;
+            /* Arredonda tudo, menos o canto inferior direito */
+            border-radius: 20px 20px 4px 20px;
+            text-align: left;
+        }
+
+        /* Estilo Balão IA */
+        .message-content.ia {
+            background-color: var(--bg-msg-ia);
+            padding-left: 0; /* Remove padding extra pois fundo é transparente */
+            /* Arredonda tudo, menos o canto inferior esquerdo */
+            border-radius: 20px 20px 20px 4px;
+        }
+
+        .message-content strong { color: #fff; font-weight: 600; }
+        .message-content code { background: #333; padding: 2px 5px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 0.9em; }
+
+        /* --- INPUT --- */
         .input-container {
             padding: 15px;
-            /* Proteção para área de gestos do iPhone */
-            padding-bottom: max(15px, env(safe-area-inset-bottom)); 
+            padding-bottom: max(15px, env(safe-area-inset-bottom));
             background: var(--bg-body);
             border-top: 1px solid #1f1f1f;
         }
 
         .input-box {
             background-color: var(--bg-input);
-            border-radius: 24px;
-            padding: 8px 15px;
-            display: flex;
-            align-items: flex-end;
+            border-radius: 24px; padding: 8px 15px;
+            display: flex; align-items: flex-end;
             border: 1px solid var(--border-color);
         }
 
         textarea {
             flex: 1; background: transparent; border: none; color: var(--text-primary);
             resize: none; max-height: 120px; padding: 10px 5px;
-            font-family: inherit; 
-            font-size: 16px; /* Importante: 16px evita zoom no iOS */
+            font-family: inherit; font-size: 16px; /* 16px evita zoom no iOS */
         }
 
         #send-btn {
@@ -199,28 +210,23 @@
         }
         #send-btn svg { width: 16px; height: 16px; fill: currentColor; }
 
-        /* --- EXTRAS --- */
-        .thinking-indicator { display: none; gap: 4px; padding: 10px 0 10px 42px; }
+        /* Indicador de Pensando */
+        .thinking-indicator { display: none; gap: 4px; padding: 0 0 10px 45px; }
         .dot { width: 6px; height: 6px; background: var(--accent-color); border-radius: 50%; animation: pulse 1.4s infinite; }
         .dot:nth-child(2) { animation-delay: 0.2s; } .dot:nth-child(3) { animation-delay: 0.4s; }
         @keyframes pulse { 0%, 100% { transform: scale(0.8); opacity: 0.5; } 50% { transform: scale(1.2); opacity: 1; } }
         @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- MOBILE RESPONSIVE --- */
+        /* Mobile Responsive */
         @media (max-width: 768px) {
             aside { 
                 position: absolute; height: 100dvh; left: 0; top: 0;
                 transform: translateX(-100%); width: 85%; max-width: 300px;
-                box-shadow: 5px 0 25px rgba(0,0,0,0.5);
             }
             aside.open { transform: translateX(0); }
             aside.open + .sidebar-overlay { opacity: 1; pointer-events: all; }
-            
             .mobile-header { display: flex; }
             #chat-container { padding: 15px; }
-            
-            /* Ajuste fino para não cobrir a última mensagem */
-            .input-container { position: relative; z-index: 5; }
         }
     </style>
 </head>
@@ -243,7 +249,7 @@
                 <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
             </button>
             <span style="font-weight:600;">Cérebro AI</span>
-            <div style="width:24px; height:24px; border-radius:50%; background:#ef4444;" id="conn-status"></div>
+            <div style="width:12px; height:12px; border-radius:50%; background:#ef4444; border: 2px solid var(--bg-sidebar);" id="conn-status"></div>
         </div>
 
         <div id="chat-container"></div>
@@ -263,23 +269,24 @@
     </main>
 
     <script>
-        // CONFIG
+        // CONFIGURAÇÃO
         const WEBSOCKET_URL = 'wss://depot-tiny-entering-called.trycloudflare.com/';
         
-        // STATE
+        // VARIÁVEIS DE ESTADO
         let socket;
         let currentSessionId = null;
         let sessions = JSON.parse(localStorage.getItem('cerebro_sessions') || '{}');
         let currentAIMessageDiv = null;
         let fullResponseBuffer = "";
 
-        // DOM
+        // DOM ELEMENTS
         const chatContainer = document.getElementById('chat-container');
         const historyList = document.getElementById('history-list');
         const msgInput = document.getElementById('message-input');
         const thinkingIndicator = document.getElementById('thinking-indicator');
         const statusDot = document.getElementById('conn-status');
 
+        // --- SISTEMA DE SESSÃO ---
         function initSessions() {
             const keys = Object.keys(sessions);
             if (keys.length > 0) loadSession(keys[keys.length - 1]);
@@ -315,6 +322,7 @@
 
         function saveSessions() { localStorage.setItem('cerebro_sessions', JSON.stringify(sessions)); }
 
+        // --- RENDERIZAÇÃO ---
         function renderHistoryList() {
             historyList.innerHTML = '';
             Object.keys(sessions).reverse().forEach(id => {
@@ -333,17 +341,22 @@
         }
 
         function createMessageBubble(text, sender) {
+            // Se for IA e já tiver stream ativo, atualiza
             if (sender === 'ia' && currentAIMessageDiv) {
                 currentAIMessageDiv.innerHTML = formatMarkdown(text);
                 scrollToBottom();
                 return;
             }
+
             const wrapper = document.createElement('div');
-            wrapper.className = 'message-wrapper';
+            // ADICIONA CLASSE 'user' ou 'ia' NO WRAPPER PARA CONTROLAR O LADO
+            wrapper.className = `message-wrapper ${sender}`;
+            
             wrapper.innerHTML = `
                 <div class="avatar ${sender}">${sender === 'user' ? 'VC' : 'IA'}</div>
                 <div class="message-content ${sender}">${sender === 'ia' ? formatMarkdown(text) : text}</div>
             `;
+            
             if (sender === 'ia') currentAIMessageDiv = wrapper.querySelector('.message-content');
             else currentAIMessageDiv = null;
             
@@ -352,57 +365,80 @@
         }
 
         function formatMarkdown(text) {
-            return text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+            return text
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/`([^`]+)`/g, '<code>$1</code>')
+                .replace(/\n/g, '<br>');
         }
 
         function scrollToBottom() {
-            // Pequeno delay ajuda no mobile quando o teclado está abrindo
-            setTimeout(() => {
-                chatContainer.scrollTop = chatContainer.scrollHeight;
-            }, 50);
+            setTimeout(() => { chatContainer.scrollTop = chatContainer.scrollHeight; }, 50);
         }
 
+        // --- WEBSOCKET ---
         function connect() {
             socket = new WebSocket(WEBSOCKET_URL);
+            
             socket.onopen = () => statusDot.style.background = '#00e676';
+            
             socket.onmessage = (e) => {
                 thinkingIndicator.style.display = 'none';
                 const data = JSON.parse(e.data);
+                
                 if (data.type === 'ia' || data.type === 'ia_stream') {
                     if (data.type === 'ia') fullResponseBuffer = data.message;
                     else fullResponseBuffer += data.message;
                     
                     createMessageBubble(fullResponseBuffer, 'ia');
-                    // Salva apenas de tempos em tempos ou no final para performance, 
-                    // aqui simplificado salvando sempre:
+                    
+                    // Salva histórico
                     let msgs = sessions[currentSessionId].messages;
-                    if(msgs.length > 0 && msgs[msgs.length-1].sender === 'ia') msgs[msgs.length-1].text = fullResponseBuffer;
-                    else msgs.push({ text: fullResponseBuffer, sender: 'ia' });
+                    if(msgs.length > 0 && msgs[msgs.length-1].sender === 'ia') {
+                        msgs[msgs.length-1].text = fullResponseBuffer;
+                    } else {
+                        msgs.push({ text: fullResponseBuffer, sender: 'ia' });
+                    }
                     saveSessions();
                 }
             };
+
             socket.onclose = () => { statusDot.style.background = '#ef4444'; setTimeout(connect, 3000); };
+            socket.onerror = () => { statusDot.style.background = '#ef4444'; };
         }
 
+        // --- AÇÕES DO USUÁRIO ---
         function sendMessage() {
             const text = msgInput.value.trim();
             if (!text) return;
             
+            // Renderiza User
             createMessageBubble(text, 'user');
+            
+            // UI Update
             msgInput.value = ''; autoResize(msgInput);
             thinkingIndicator.style.display = 'flex';
             scrollToBottom();
 
+            // Salva
             sessions[currentSessionId].messages.push({ text, sender: 'user' });
-            if(sessions[currentSessionId].messages.length === 1) sessions[currentSessionId].title = text.substring(0,25) + '...';
+            if(sessions[currentSessionId].messages.length === 1) {
+                sessions[currentSessionId].title = text.substring(0, 25) + '...';
+            }
             saveSessions();
             renderHistoryList();
 
+            // Envia
             fullResponseBuffer = "";
             currentAIMessageDiv = null;
-            socket.send(text);
+            if(socket.readyState === WebSocket.OPEN) {
+                socket.send(text);
+            } else {
+                alert("Sem conexão com o Cérebro.");
+                thinkingIndicator.style.display = 'none';
+            }
         }
 
+        // --- UTILITÁRIOS ---
         function autoResize(el) {
             el.style.height = 'auto';
             el.style.height = Math.min(el.scrollHeight, 120) + 'px';
@@ -411,10 +447,13 @@
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
         function closeSidebarMobile() { document.getElementById('sidebar').classList.remove('open'); }
 
+        // Bindings
         document.getElementById('send-btn').onclick = sendMessage;
         msgInput.onkeypress = (e) => { if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }};
 
+        // Init
         window.onload = () => { initSessions(); connect(); };
+
     </script>
 </body>
 </html>
