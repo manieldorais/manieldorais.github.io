@@ -1,0 +1,239 @@
+/* =========================================
+   BASE & RESET (Comum a todas as páginas)
+   ========================================= */
+body {
+    background-color: #ffffff;
+    color: #1a1a1a;
+    font-family: "Georgia", "Times New Roman", serif;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* IMPORTANTE: Evita barra de rolagem horizontal indesejada */
+}
+
+a { text-decoration: none; color: inherit; }
+
+/* Loader simples */
+.loader {
+    text-align: center;
+    padding: 50px;
+    opacity: 0.3;
+    font-size: 20px;
+}
+
+/* =========================================
+   PÁGINA PRINCIPAL (INDEX / PORTFÓLIO)
+   ========================================= */
+.home-header {
+    padding: 80px 20px 40px;
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.home-header h1 {
+    font-weight: normal;
+    font-size: 2rem;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+}
+
+.home-header p {
+    color: #888;
+    font-size: 0.9rem;
+    font-style: italic;
+}
+
+.collection {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px 100px;
+    display: grid;
+    /* CORREÇÃO AQUI: Baixei de 300px para 260px para caber em celulares menores */
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 60px 40px;
+}
+
+.album-card {
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+}
+
+.img-container {
+    width: 100%;
+    aspect-ratio: 4 / 5; /* Mantém todas as capas verticais e elegantes */
+    overflow: hidden;
+    background-color: #f4f4f4;
+    margin-bottom: 20px;
+}
+
+.img-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.8s ease;
+    display: block;
+}
+
+.album-card:hover .img-container img { transform: scale(1.05); }
+
+.album-info h2 {
+    font-size: 1.5rem;
+    font-weight: normal;
+    margin: 0 0 5px 0;
+}
+
+.album-card:hover .album-info h2 { text-decoration: underline; text-underline-offset: 4px; }
+
+.album-info span {
+    font-size: 0.8rem;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.site-footer {
+    text-align: center;
+    padding: 40px;
+    border-top: 1px solid #eee;
+    font-size: 0.8rem;
+    color: #ccc;
+}
+
+/* =========================================
+   PÁGINAS DE ÁLBUM (PHOTOBOOK)
+   ========================================= */
+.book-header {
+    height: 40vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 0 20px;
+    opacity: 0; 
+    animation: fadeIn 2s ease forwards;
+}
+
+.book-header h1 {
+    font-size: 3.5rem;
+    font-weight: normal;
+    margin: 0 0 20px 0;
+    letter-spacing: -1px;
+    line-height: 1.1;
+}
+
+.scroll-indicator {
+    position: absolute;
+    bottom: 40px;
+    font-size: 24px;
+    animation: bounce 2s infinite;
+    opacity: 0.5;
+}
+
+#feed {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 15px 80px 15px;
+}
+
+.photo-entry {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 1.2s ease, transform 1.2s ease;
+    margin-bottom: 100px;
+    display: flex;
+    flex-direction: column;
+}
+
+.photo-entry.visible { opacity: 1; transform: translateY(0); }
+
+.photo-entry img {
+    display: block;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+}
+
+.meta {
+    font-size: 0.75rem;
+    color: #888;
+    margin-top: 12px;
+    font-style: italic;
+    letter-spacing: 0.5px;
+    border-left: 1px solid #000;
+    padding-left: 12px;
+}
+
+/* Layouts do Photobook */
+.layout-full { 
+    align-items: center; 
+    margin-left: -15px; margin-right: -15px; 
+    width: calc(100% + 30px); /* Vaza as bordas no mobile */
+}
+.layout-full img { width: 100%; }
+.layout-full .meta { margin-left: 20px; border: none; }
+
+.layout-left { align-items: flex-start; }
+.layout-left img { width: 85%; max-width: 500px; }
+
+.layout-right { align-items: flex-end; }
+.layout-right img { width: 85%; max-width: 500px; }
+.layout-right .meta { text-align: right; border-left: none; border-right: 1px solid #000; padding-right: 12px; }
+
+.layout-portrait { align-items: center; }
+.layout-portrait img { width: 70%; max-width: 450px; }
+
+/* Animações */
+@keyframes fadeIn { to { opacity: 1; } }
+@keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-10px);} 60% {transform: translateY(-5px);} }
+
+/* Media Queries para Desktop */
+@media (min-width: 769px) {
+    /* Ajustes Index */
+    .home-header { padding-top: 80px; }
+    
+    /* Ajustes Photobook */
+    #feed { padding: 40px 40px 100px 40px; }
+    .book-header h1 { font-size: 5rem; }
+    
+    .layout-full { width: 100%; margin: 0; }
+    .layout-full img { max-width: 900px; }
+    
+    .layout-left img, .layout-right img { width: 55%; }
+    .layout-portrait img { width: 40%; }
+}
+/* Botão de Voltar Fixo */
+.btn-voltar {
+	position: fixed;
+	top: 20px;
+	left: 20px;
+	z-index: 1000; /* Garante que fique acima das fotos */
+	
+	text-decoration: none;
+	color: #333; /* Ajuste para combinar com seu tema */
+	background: rgba(255, 255, 255, 0.8);
+	padding: 10px 15px;
+	border-radius: 30px;
+	font-family: sans-serif;
+	font-size: 0.9rem;
+	font-weight: bold;
+	
+	/* Efeito de vidro (opcional, moderno) */
+	backdrop-filter: blur(5px);
+	box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+	transition: transform 0.2s ease, background 0.2s;
+}
+
+.btn-voltar:hover {
+	transform: translateX(-3px);
+	background: #fff;
+}
+
+/* Ajuste para mobile se necessário */
+@media (max-width: 600px) {
+	.btn-voltar {
+		top: 15px;
+		left: 15px;
+		padding: 8px 12px;
+		font-size: 0.8rem;
+	}
+}

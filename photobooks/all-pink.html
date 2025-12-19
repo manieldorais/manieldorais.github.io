@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+	<title>All Pink — Photo Book</title>
+	<meta name="description" content="Um álbum visual monocromático explorando tons de rosa em Taubaté, SP. Fotografia por Daniel Morais.">
+	<meta name="keywords" content="fotografia, photobook, rosa, taubaté, daniel morais, portfólio, arte visual">
+	<meta name="author" content="Daniel Morais">
+
+	<meta property="og:type" content="website">
+	<meta property="og:url" content="https://manieldorais.github.io/photobooks/all-pink.html">
+	<meta property="og:title" content="All Pink — Photo Book">
+	<meta property="og:description" content="Coleção visual por Daniel Morais.">
+	<meta property="og:image" content="https://manieldorais.github.io/photobooks/all-pink/IMG_6237.jpg">
+
+	<meta property="twitter:card" content="summary_large_image">
+	<meta property="twitter:url" content="https://manieldorais.github.io/photobooks/all-pink.html">
+	<meta property="twitter:title" content="All Pink — Photo Book">
+	<meta property="twitter:description" content="Coleção visual por Daniel Morais.">
+	<meta property="twitter:image" content="https://manieldorais.github.io/photobooks/all-pink/IMG_6237.jpg">
+
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+	<a href="index.html" class="btn-voltar" aria-label="Voltar para álbuns">
+		← Álbuns
+	</a>
+
+	<header class="book-header">
+		<h1>All<br>Pink</h1>
+		<p>Taubaté, SP — 2025 | By Daniel Morais @manieldorais</p>
+		<div class="scroll-indicator">↓</div>
+	</header>
+
+	<div id="feed"></div>
+	
+	<div class="loader">❧</div>
+
+	<script>
+		// ... seu array photoData continua aqui ...
+		const photoData = [
+			{ src: 'all-pink/IMG_6287.jpg', date: 'Flô - Dezembro de 2025' },
+			{ src: 'all-pink/IMG_6237.jpg', date: 'Brilinho - Dezembro de 2025' },
+			{ src: 'all-pink/IMG_6227.jpg', date: 'Bola de Natal - Dezembro de 2025' },
+			{ src: 'all-pink/IMG_6231.jpg', date: 'Relógio Bonitinho - Dezembro de 2025' },
+			{ src: 'all-pink/IMG_6241.jpg', date: 'Bolas de Natal - Dezembro de 2025' },
+			{ src: 'all-pink/IMG_6243.jpg', date: 'Planta Bonitinha - Dezembro de 2025' },
+			{ src: 'all-pink/IMG_6252.jpg', date: 'Vrumm - Dezembro de 2025' },
+			{ src: 'all-pink/IMG_6263.jpg', date: 'Picole - Dezembro de 2025' },
+			{ src: 'all-pink/IMG_6329.jpg', date: 'Tubarãorosa - Dezembro de 2025' }
+		];
+	</script>
+
+	<script src="script.js"></script>
+	<script type="module" src="firebase.js"></script>
+</body>
+</html>
