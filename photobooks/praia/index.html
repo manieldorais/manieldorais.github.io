@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+	<title>Praia — Photo Book</title>
+	<meta name="description" content="Um álbum visual monocromático explorando tons de rosa em Taubaté, SP. Fotografia por Daniel Morais.">
+	<meta name="keywords" content="fotografia, photobook, rosa, taubaté, daniel morais, portfólio, arte visual">
+	<meta name="author" content="Daniel Morais">
+
+	<meta property="og:type" content="website">
+	<meta property="og:url" content="https://manieldorais.github.io/photobooks/praia/">
+	<meta property="og:title" content="Praia — Photo Book">
+	<meta property="og:description" content="Coleção visual por Daniel Morais.">
+	<meta property="og:image" content="https://manieldorais.github.io/photobooks/praia/img/20220903_094719~2.jpg">
+
+	<meta property="twitter:card" content="summary_large_image">
+	<meta property="twitter:url" content="https://manieldorais.github.io/photobooks/praia">
+	<meta property="twitter:title" content="Praia — Photo Book">
+	<meta property="twitter:description" content="Coleção visual por Daniel Morais.">
+	<meta property="twitter:image" content="https://manieldorais.github.io/photobooks/praia/img/20220903_094719~2.jpg">
+
+	<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+	<a href="../" class="btn-voltar" aria-label="Voltar para álbuns">
+		← Álbuns
+	</a>
+
+	<header class="book-header">
+		<h1>Praia</h1>
+		<p>By Daniel Morais @manieldorais</p>
+		<div class="scroll-indicator">↓</div>
+	</header>
+
+	<div id="feed"></div>
+	
+	<div class="loader">❧</div>
+
+	<script>
+		const photoData = [
+			{ src: 'img/IMG_20240706_150838903.jpg', date: '' },
+			{ src: 'img/20220903_094719~2.jpg', date: '' },
+			{ src: 'img/20220904_122300.jpg', date: '' },
+			{ src: 'img/IMG_20240517_213735_552.webp', date: '' },
+			{ src: 'img/IMG_20240519_101147_499.webp', date: '' },
+			{ src: 'img/IMG_20240519_130353504.jpg', date: '' },
+			{ src: 'img/IMG_20240519_134356372.jpg', date: '' },
+			{ src: 'img/IMG_20240706_131310810.jpg', date: '' },
+			{ src: 'img/IMG_20240706_171126857_MP.jpg', date: '' },
+			{ src: 'img/IMG_20240707_083952050_MP.jpg', date: '' },
+			{ src: 'img/IMG_20240707_085450626_MP.jpg', date: '' },
+			{ src: 'img/IMG_20240707_085455941_MP.jpg', date: '' }
+		];
+	</script>
+
+	<script src="../script.js"></script>
+	<script type="module" src="../firebase.js"></script>
+</body>
+</html>

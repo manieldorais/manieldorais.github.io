@@ -144,6 +144,8 @@ a { text-decoration: none; color: inherit; }
     margin-bottom: 100px;
     display: flex;
     flex-direction: column;
+    max-height: 90vh;
+    max-width: 100vw;
 }
 
 .photo-entry.visible { opacity: 1; transform: translateY(0); }
@@ -151,6 +153,8 @@ a { text-decoration: none; color: inherit; }
 .photo-entry img {
     display: block;
     box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+    max-height: 90vh;
+    max-width: 100vw;
 }
 
 .meta {
