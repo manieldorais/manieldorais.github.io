@@ -1,0 +1,115 @@
+ :root {
+    --primary: #ff6b81;
+    --primary-light: #ffe0e6;
+    --accent: #2ed573;
+    --warning: #ff4757; /* Cor para atraso */
+    --text: #2f3542;
+    --bg: #ffffff;
+    --gray-light: #f1f2f6;
+}
+
+* { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
+
+body { margin: 0; padding: 0; background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; }
+
+/* --- UI Geral --- */
+header { 
+    padding: 15px; 
+    text-align: center; 
+    font-weight: 800; 
+    font-size: 1.5rem; 
+    color: var(--primary); 
+    letter-spacing: -1px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.view-container { flex: 1; overflow-y: auto; display: none; padding-bottom: 80px; }
+.view-container.active { display: flex; flex-direction: column; align-items: center; }
+
+/* --- Dashboard (Home) --- */
+.cycle-circle {
+    width: 260px; height: 260px;
+    border-radius: 50%;
+    border: 6px solid var(--gray-light);
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    margin: 30px 0;
+    position: relative;
+    transition: all 0.5s ease;
+}
+.cycle-circle.period { border-color: var(--primary); color: var(--primary); background: radial-gradient(circle, #fff, #fff0f3); }
+.cycle-circle.fertile { border-color: var(--accent); color: var(--accent); background: radial-gradient(circle, #fff, #dcffeb); }
+/* Estilo de Atraso */
+.cycle-circle.late { border-color: var(--warning); color: var(--warning); background: radial-gradient(circle, #fff, #ffebee); box-shadow: 0 10px 20px rgba(255, 71, 87, 0.2); }
+
+.day-big { font-size: 4rem; font-weight: 800; line-height: 1; }
+.status-text { font-size: 1.1rem; font-weight: 500; margin-top: 5px; }
+.late-text { font-size: 0.9rem; font-weight: bold; color: var(--warning); margin-top: 5px; text-transform: uppercase; }
+
+.btn-action {
+    background: var(--primary); color: white; border: none; padding: 15px 40px;
+    border-radius: 50px; font-size: 1rem; font-weight: bold;
+    box-shadow: 0 4px 15px rgba(255, 107, 129, 0.3);
+    width: 80%; max-width: 300px; margin-bottom: 20px; cursor: pointer;
+}
+
+/* --- Calendário --- */
+#calendar-view { width: 100%; padding: 10px; align-items: stretch; }
+
+.calendar-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; font-weight: bold; font-size: 1.2rem; }
+.calendar-nav-btn { background: none; border: none; font-size: 1.5rem; color: var(--primary); padding: 0 10px; cursor: pointer; }
+
+.week-days { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 0.8rem; color: #aaa; margin-bottom: 10px; }
+.calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+
+.day-cell {
+    aspect-ratio: 1;
+    display: flex; justify-content: center; align-items: center;
+    border-radius: 50%;
+    font-size: 0.9rem;
+    position: relative;
+    cursor: pointer;
+}
+.day-cell.today { font-weight: bold; border: 2px solid var(--text); }
+.day-cell.period { background-color: var(--primary); color: white; }
+.day-cell.fertile { border: 2px solid var(--accent); color: var(--accent); }
+.day-cell.ovulation { background-color: var(--accent); color: white; border: none; }
+.day-cell.future-period { background-color: var(--primary-light); color: var(--primary); border: 1px dashed var(--primary); }
+.day-cell.empty { pointer-events: none; }
+
+/* --- Bottom Nav --- */
+.bottom-nav {
+    position: fixed; bottom: 0; left: 0; width: 100%;
+    background: white; border-top: 1px solid #eee;
+    display: flex; justify-content: space-around; padding: 10px 0;
+    z-index: 10;
+}
+.nav-item { border: none; background: none; color: #aaa; font-size: 0.8rem; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; }
+.nav-item.active { color: var(--primary); font-weight: bold; }
+.nav-icon { font-size: 1.4rem; }
+
+/* --- Modals / Sheets --- */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5); z-index: 50; display: none;
+    justify-content: center; align-items: flex-end;
+}
+.modal-overlay.active { display: flex; }
+
+.bottom-sheet {
+    background: white; width: 100%; max-width: 500px;
+    border-radius: 20px 20px 0 0; padding: 25px;
+    box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
+    animation: slideUp 0.3s ease;
+    max-height: 85vh; overflow-y: auto;
+}
+
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+.sheet-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 5px; }
+.sheet-subtitle { color: #888; font-size: 0.9rem; margin-bottom: 20px; }
+.tag { padding: 5px 12px; border-radius: 15px; font-size: 0.85rem; display: inline-block; margin-right: 5px; }
+.tag.period { background: var(--primary-light); color: var(--primary); }
+.tag.fertile { background: #dcffeb; color: var(--accent); }
+
+input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 15px; }
+label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; margin-top: 10px; }

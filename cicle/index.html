@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cicle</title>
+    <link rel="stylesheet" href="main.css">
+</head>
+<body>
+    
+    <header>Cicle</header>
+    
+    <main id="home-view" class="view-container active">
+        <div class="cycle-circle" id="cycleDisplay">
+            <span class="status-text">Dia do Ciclo</span>
+            <span class="day-big" id="currentDayCycle">1</span>
+            <span class="status-text" id="phaseText">...</span>
+            <span class="late-text" id="lateWarning" style="display:none;"></span>
+        </div>
+        
+        <button class="btn-action" onclick="logPeriodStart()">Menstruei Hoje</button>
+        
+        <div style="text-align: center; color: #888; margin-top: 10px;">
+            <small>Próxima menstruação em: <b id="nextPeriodText" style="color: var(--primary)">--</b></small>
+        </div>
+    </main>
+    
+    <main id="calendar-view" class="view-container">
+        <div class="calendar-header">
+            <button class="calendar-nav-btn" onclick="changeMonth(-1)">&#8249;</button>
+            <span id="calendarMonthYear">Mês Ano</span>
+            <button class="calendar-nav-btn" onclick="changeMonth(1)">&#8250;</button>
+        </div>
+        <div class="week-days">
+            <div>D</div><div>S</div><div>T</div><div>Q</div><div>Q</div><div>S</div><div>S</div>
+        </div>
+        <div class="calendar-grid" id="calendarGrid">
+        </div>
+    </main>
+    
+    <nav class="bottom-nav">
+        <button class="nav-item active" onclick="switchTab('home')" id="tab-home">
+            <span class="nav-icon">●</span>
+            Hoje
+        </button>
+        <button class="nav-item" onclick="switchTab('calendar')" id="tab-calendar">
+            <span class="nav-icon">▦</span>
+            Calendário
+        </button>
+        <button class="nav-item" onclick="openSettings()" id="tab-settings">
+            <span class="nav-icon">⚙</span>
+            Ajustes
+        </button>
+    </nav>
+    
+    <div class="modal-overlay" id="dayDetailModal" onclick="if(event.target === this) closeDayModal()">
+        <div class="bottom-sheet">
+            <div class="sheet-title" id="detailDate">Data</div>
+            <div class="sheet-subtitle" id="detailStatus">Status</div>
+            
+            <div id="detailTags" style="margin-bottom: 20px;"></div>
+            
+            <p style="font-size: 0.9rem; color: #666; line-height: 1.5;">
+                Toque abaixo para registrar ou remover o início da menstruação nesta data.
+            </p>
+            
+            <button class="btn-action" style="width: 100%;" onclick="togglePeriodOnSelectedDate()">Alternar Menstruação</button>
+            <button onclick="closeDayModal()" style="width:100%; padding: 15px; border:none; background:white; color:#888;">Fechar</button>
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="settingsModal">
+        <div class="bottom-sheet">
+            <div class="sheet-title">Configurações do Ciclo</div>
+            <p style="font-size: 0.85rem; color:#888; margin-bottom:15px;">Ajuste seus dados para melhorar as previsões.</p>
+            
+            <label>Início da Última Menstruação</label>
+            <input type="date" id="lastPeriodDateSetting">
+            
+            <label>Duração do Ciclo (dias)</label>
+            <input type="number" id="cycleLength" value="28">
+            
+            <label>Duração do Sangramento (dias)</label>
+            <input type="number" id="periodLength" value="5">
+            
+            <button class="btn-action" style="width: 100%; margin-top:10px;" onclick="saveSettings()">Salvar Configurações</button>
+            <button onclick="document.getElementById('settingsModal').classList.remove('active')" style="width:100%; padding: 15px; border:none; background:white; color:#888;">Cancelar</button>
+        </div>
+    </div>
+    
+    <script src="main.js"></script>
+</body>
+</html>
