@@ -3,77 +3,55 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-	<title>Floresta Encantada da Ana</title>
+	<title>A Missão de Ana</title>
 	<style>
-		body { margin: 0; overflow: hidden; font-family: 'Segoe UI', sans-serif; background-color: #87CEEB; touch-action: none; }
+		body { margin: 0; overflow: hidden; background: #87cefa; touch-action: none; font-family: sans-serif; }
 		
 		#ui {
-			position: absolute;
-			top: 50%; left: 50%;
-			transform: translate(-50%, -50%);
-			color: #2d5a27;
-			text-align: center;
-			background: rgba(255, 255, 255, 0.9);
-			padding: 30px;
-			border-radius: 20px;
-			border: 4px solid #ff69b4;
-			cursor: pointer;
-			z-index: 10;
+			position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+			color: #333; text-align: center; background: rgba(255, 255, 255, 0.95);
+			padding: 40px; border-radius: 20px; border: 3px solid #ff69b4;
+			cursor: pointer; z-index: 10; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+			width: 80%; max-width: 400px;
 		}
 
-		/* Controles Mobile */
-		#joystick-container {
-			position: absolute;
-			bottom: 50px;
-			left: 50px;
-			width: 120px;
-			height: 120px;
-			background: rgba(255, 255, 255, 0.2);
-			border-radius: 50%;
-			display: none; /* Aparece via JS no mobile */
-			touch-action: none;
+		#joystick-zone {
+			display: none; position: absolute; bottom: 30px; left: 30px;
+			width: 120px; height: 120px; background: rgba(255, 255, 255, 0.4);
+			border-radius: 50%; border: 2px solid rgba(255, 105, 180, 0.5); z-index: 5;
 		}
 		#joystick-knob {
-			position: absolute;
-			top: 35px;
-			left: 35px;
-			width: 50px;
-			height: 50px;
-			background: #ff69b4;
-			border-radius: 50%;
+			position: absolute; top: 35px; left: 35px;
+			width: 50px; height: 50px; background: #ff69b4;
+			border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 		}
 
 		#win-screen {
-			display: none;
-			position: fixed;
-			top: 0; left: 0; width: 100%; height: 100%;
-			background: linear-gradient(135deg, #fff0f5 0%, #ffe4e1 100%);
-			color: #ff1493;
-			flex-direction: column;
-			justify-content: center;
-			align-items: center;
-			z-index: 100;
-			text-align: center;
+			display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+			background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+			color: #ff1493; flex-direction: column; justify-content: center; align-items: center;
+			z-index: 100; text-align: center;
 		}
 
-		.btn { margin-top: 20px; padding: 12px 25px; background: #ff69b4; color: white; border: none; border-radius: 25px; cursor: pointer; }
+		.btn { margin-top: 20px; padding: 15px 30px; background: #ff69b4; color: white; border: none; border-radius: 30px; font-weight: bold; font-size: 1.2rem; cursor: pointer; }
 	</style>
 </head>
 <body>
 
 	<div id="ui">
-		<h1>🌸 O Jardim Secreto 🌸</h1>
-		<p>Toque para entrar no mundo</p>
+		<h1>🌸 Jardim Feliz 🌸</h1>
+		<p>Ana, explore este mundo e encontre sua surpresa!</p>
+		<p><strong>Toque para começar</strong></p>
 	</div>
 
-	<div id="joystick-container">
+	<div id="joystick-zone">
 		<div id="joystick-knob"></div>
 	</div>
 
 	<div id="win-screen">
-		<h1>ANA, EU TE AMO! ❤️</h1>
-		<p>Você encontrou o que estava escondido no meu coração.</p>
-		<button class="btn" onclick="location.reload()">Recomeçar</button>
+		<h1 style="font-size: 3rem; text-shadow: 2px 2px 10px rgba(255,255,255,0.8);">ANA, EU TE AMO! ❤️</h1>
+		<p style="font-size: 1.2rem; color: #555;">Você deixa meu mundo mais colorido.</p>
+		<button class="btn" onclick="location.reload()">Jogar de novo</button>
 	</div>
 
 	<script type="importmap">
@@ -89,131 +67,222 @@
 		import * as THREE from 'three';
 		import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
 
+		// 1. Configuração Principal - Dia Claro e Feliz
 		const scene = new THREE.Scene();
-		scene.background = new THREE.Color(0x87CEEB);
-		scene.fog = new THREE.Fog(0x87CEEB, 10, 100);
+		scene.background = new THREE.Color(0x87cefa); // Azul Céu
+		scene.fog = new THREE.FogExp2(0x87cefa, 0.015);
 
-		const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+		const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
 		const renderer = new THREE.WebGLRenderer({ antialias: true });
 		renderer.setSize(window.innerWidth, window.innerHeight);
+		renderer.shadowMap.enabled = true;
+		renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 		document.body.appendChild(renderer.domElement);
 
-		// Luzes
-		scene.add(new THREE.AmbientLight(0xffffff, 1.2));
-		const sun = new THREE.DirectionalLight(0xfff5e1, 1.5);
-		sun.position.set(50, 100, 50);
-		scene.add(sun);
+		// 2. Iluminação Ensolarada
+		scene.add(new THREE.AmbientLight(0xffffff, 1.2)); 
+		
+		const sunLight = new THREE.DirectionalLight(0xffffff, 1.5); 
+		sunLight.position.set(50, 100, 50); 
+		sunLight.castShadow = true;
+		sunLight.shadow.camera.left = -60; sunLight.shadow.camera.right = 60;
+		sunLight.shadow.camera.top = 60; sunLight.shadow.camera.bottom = -60;
+		scene.add(sunLight);
 
-		// Chão
-		const floor = new THREE.Mesh(new THREE.PlaneGeometry(1000, 1000), new THREE.MeshPhongMaterial({ color: 0x7cfc00 }));
+		// 3. Chão de Grama Viva
+		const floorMat = new THREE.MeshStandardMaterial({ color: 0x7cfc00, roughness: 1 });
+		const floor = new THREE.Mesh(new THREE.PlaneGeometry(300, 300), floorMat);
 		floor.rotation.x = -Math.PI / 2;
+		floor.receiveShadow = true;
 		scene.add(floor);
 
-		// Árvores
-		const treeCount = 800;
-		const trunks = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.15, 0.25, 2), new THREE.MeshPhongMaterial({ color: 0x8b4513 }), treeCount);
-		const leaves = new THREE.InstancedMesh(new THREE.SphereGeometry(1.5, 8, 8), new THREE.MeshPhongMaterial({ color: 0x32cd32 }), treeCount);
+		// 4. Floresta Feliz (InstancedMesh)
+		const treeCount = 400;
+		const trunkGeo = new THREE.CylinderGeometry(0.3, 0.5, 4);
+		const leavesGeo = new THREE.SphereGeometry(2.5, 8, 8); // Copas redondas/fofas
+		
+		const trunks = new THREE.InstancedMesh(trunkGeo, new THREE.MeshStandardMaterial({ color: 0x8b4513 }), treeCount);
+		const leaves = new THREE.InstancedMesh(leavesGeo, new THREE.MeshStandardMaterial({ color: 0x32cd32 }), treeCount);
+		trunks.castShadow = true; leaves.castShadow = true;
+		trunks.receiveShadow = true; leaves.receiveShadow = true;
+
 		const dummy = new THREE.Object3D();
 		for (let i = 0; i < treeCount; i++) {
-			const x = (Math.random() - 0.5) * 300;
-			const z = (Math.random() - 0.5) * 300;
-			if (Math.sqrt(x*x + z*z) < 15) continue;
-			dummy.position.set(x, 1, z); dummy.updateMatrix(); trunks.setMatrixAt(i, dummy.matrix);
-			dummy.position.set(x, 3, z); dummy.updateMatrix(); leaves.setMatrixAt(i, dummy.matrix);
+			const x = (Math.random() - 0.5) * 200;
+			const z = (Math.random() - 0.5) * 200;
+			if (Math.abs(x) < 8 || (x*x + z*z) < 40) continue; // Caminho bem livre
+			
+			const scale = 0.8 + Math.random() * 0.7;
+			dummy.position.set(x, 2 * scale, z);
+			dummy.scale.set(scale, scale, scale);
+			dummy.updateMatrix();
+			trunks.setMatrixAt(i, dummy.matrix);
+
+			dummy.position.set(x, 5 * scale, z);
+			dummy.rotation.y = Math.random() * Math.PI;
+			dummy.updateMatrix();
+			leaves.setMatrixAt(i, dummy.matrix);
 		}
 		scene.add(trunks, leaves);
 
-		// Alvo
-		const targetPos = { x: 0, z: -60 };
+		// 5. Jardim de Flores Coloridas
+		const flowerColors = [0xff69b4, 0xffd700, 0xffffff]; // Rosa, Amarelo, Branco
+		const flowerGeo = new THREE.SphereGeometry(0.3, 5, 5);
+		flowerColors.forEach(color => {
+			const flowerMat = new THREE.MeshStandardMaterial({ color: color });
+			const flowers = new THREE.InstancedMesh(flowerGeo, flowerMat, 300);
+			for (let i = 0; i < 300; i++) {
+				const x = (Math.random() - 0.5) * 200;
+				const z = (Math.random() - 0.5) * 200;
+				if (Math.abs(x) < 4) continue; // Evita o centro exato
+				dummy.position.set(x, 0.2, z);
+				dummy.updateMatrix();
+				flowers.setMatrixAt(i, dummy.matrix);
+			}
+			scene.add(flowers);
+		});
+
+		// 6. O Alvo Brilhante
+		const targetPos = { x: 0, z: -80 };
 		const canvas = document.createElement('canvas');
 		const ctx = canvas.getContext('2d');
-		canvas.width = 512; canvas.height = 128;
-		ctx.fillStyle = '#ff1493'; ctx.font = 'bold 50px Arial'; ctx.textAlign = 'center';
-		ctx.fillText('ANA, EU TE AMO! ❤️', 256, 64);
+		canvas.width = 1024; canvas.height = 256;
+		ctx.fillStyle = '#ff1493'; ctx.font = 'bold 90px sans-serif'; ctx.textAlign = 'center';
+		ctx.shadowColor = "#ffffff"; ctx.shadowBlur = 20; // Brilho branco ao redor do texto rosa
+		ctx.fillText('✨ ANA, EU TE AMO! ✨', 512, 128);
+
 		const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(canvas) }));
-		sprite.scale.set(10, 2.5, 1);
+		sprite.scale.set(15, 3.5, 1);
 		sprite.position.set(targetPos.x, 3, targetPos.z);
 		scene.add(sprite);
 
-		// --- LÓGICA DE CONTROLE ---
+		// 7. Controles
 		const controls = new PointerLockControls(camera, document.body);
-		const isMobile = /Android|iPhone/i.test(navigator.userAgent);
-		if(isMobile) document.getElementById('joystick-container').style.display = 'block';
-
-		document.getElementById('ui').addEventListener('click', () => {
-			if(!isMobile) controls.lock();
-			document.getElementById('ui').style.display = 'none';
-		});
-
-		// Movimento Keyboard
-		let keys = { w: false, s: false, a: false, d: false };
-		document.addEventListener('keydown', (e) => { if(keys.hasOwnProperty(e.key.toLowerCase())) keys[e.key.toLowerCase()] = true; });
-		document.addEventListener('keyup', (e) => { if(keys.hasOwnProperty(e.key.toLowerCase())) keys[e.key.toLowerCase()] = false; });
-
-		// Movimento Joystick (Mobile)
-		let joyX = 0, joyY = 0;
-		const knob = document.getElementById('joystick-knob');
-		const joyContainer = document.getElementById('joystick-container');
+		const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
 		
-		joyContainer.addEventListener('touchmove', (e) => {
-			const touch = e.touches[0];
-			const rect = joyContainer.getBoundingClientRect();
-			const centerX = rect.left + rect.width/2;
-			const centerY = rect.top + rect.height/2;
-			joyX = (touch.clientX - centerX) / (rect.width/2);
-			joyY = (touch.clientY - centerY) / (rect.height/2);
-			const dist = Math.min(1, Math.sqrt(joyX*joyX + joyY*joyY));
-			const angle = Math.atan2(joyY, joyX);
-			joyX = Math.cos(angle) * dist;
-			joyY = Math.sin(angle) * dist;
-			knob.style.transform = `translate(${joyX * 40}px, ${joyY * 40}px)`;
-		});
-		joyContainer.addEventListener('touchend', () => {
-			joyX = 0; joyY = 0; knob.style.transform = `translate(0,0)`;
+		const ui = document.getElementById('ui');
+		const joyZone = document.getElementById('joystick-zone');
+		const knob = document.getElementById('joystick-knob');
+
+		ui.addEventListener('click', () => {
+			if (!isMobile) controls.lock();
+			ui.style.display = 'none';
+			if (isMobile) joyZone.style.display = 'block';
 		});
 
-		// Rotação Mobile (Lado direito da tela)
-		let lastTouchX = 0;
-		document.addEventListener('touchstart', (e) => { lastTouchX = e.touches[0].clientX; });
-		document.addEventListener('touchmove', (e) => {
-			if (e.target.id === 'joystick-container' || e.target.id === 'joystick-knob') return;
-			const touchX = e.touches[0].clientX;
-			const deltaX = touchX - lastTouchX;
-			camera.rotation.y -= deltaX * 0.005;
-			lastTouchX = touchX;
+		// Lógica PC
+		let keys = { w: false, s: false, a: false, d: false };
+		document.addEventListener('keydown', e => { if(keys[e.key.toLowerCase()] !== undefined) keys[e.key.toLowerCase()] = true; });
+		document.addEventListener('keyup', e => { if(keys[e.key.toLowerCase()] !== undefined) keys[e.key.toLowerCase()] = false; });
+
+		// Lógica Mobile
+		let joyTouchId = null, lookTouchId = null;
+		let joyX = 0, joyY = 0;
+		let lastLookX = 0, lastLookY = 0;
+		const maxJoyDist = 40;
+
+		document.addEventListener('touchstart', e => {
+			for (let i = 0; i < e.changedTouches.length; i++) {
+				const touch = e.changedTouches[i];
+				const joyRect = joyZone.getBoundingClientRect();
+				
+				if (touch.clientX >= joyRect.left && touch.clientX <= joyRect.right && 
+					touch.clientY >= joyRect.top && touch.clientY <= joyRect.bottom) {
+					joyTouchId = touch.identifier;
+				} else if (touch.clientX > window.innerWidth / 2) {
+					lookTouchId = touch.identifier;
+					lastLookX = touch.clientX;
+					lastLookY = touch.clientY;
+				}
+			}
+		}, { passive: false });
+
+		document.addEventListener('touchmove', e => {
+			for (let i = 0; i < e.changedTouches.length; i++) {
+				const touch = e.changedTouches[i];
+				
+				if (touch.identifier === joyTouchId) {
+					e.preventDefault();
+					const rect = joyZone.getBoundingClientRect();
+					const centerX = rect.left + rect.width / 2;
+					const centerY = rect.top + rect.height / 2;
+					
+					let dx = touch.clientX - centerX;
+					let dy = touch.clientY - centerY;
+					const distance = Math.min(maxJoyDist, Math.sqrt(dx*dx + dy*dy));
+					const angle = Math.atan2(dy, dx);
+					
+					const knobX = Math.cos(angle) * distance;
+					const knobY = Math.sin(angle) * distance;
+					knob.style.transform = `translate(${knobX}px, ${knobY}px)`;
+					
+					joyX = knobX / maxJoyDist;
+					joyY = knobY / maxJoyDist;
+				} else if (touch.identifier === lookTouchId) {
+					e.preventDefault();
+					const deltaX = touch.clientX - lastLookX;
+					const deltaY = touch.clientY - lastLookY;
+					
+					camera.rotation.y -= deltaX * 0.004;
+					camera.rotation.x -= deltaY * 0.004;
+					camera.rotation.x = Math.max(-Math.PI/2, Math.min(Math.PI/2, camera.rotation.x));
+					
+					lastLookX = touch.clientX;
+					lastLookY = touch.clientY;
+				}
+			}
+		}, { passive: false });
+
+		document.addEventListener('touchend', e => {
+			for (let i = 0; i < e.changedTouches.length; i++) {
+				const touch = e.changedTouches[i];
+				if (touch.identifier === joyTouchId) {
+					joyTouchId = null; joyX = 0; joyY = 0;
+					knob.style.transform = `translate(0px, 0px)`;
+				}
+				if (touch.identifier === lookTouchId) lookTouchId = null;
+			}
 		});
 
+		// 8. Loop Principal
 		const clock = new THREE.Clock();
+		camera.position.set(0, 1.6, 5);
+		camera.rotation.order = 'YXZ';
+
 		function animate() {
 			requestAnimationFrame(animate);
 			const delta = clock.getDelta();
-			const speed = 25 * delta;
+			const speed = 20 * delta;
 
-			// Movimento PC
 			if (controls.isLocked) {
 				if (keys.w) controls.moveForward(speed);
 				if (keys.s) controls.moveForward(-speed);
 				if (keys.a) controls.moveRight(-speed);
 				if (keys.d) controls.moveRight(speed);
+			} else if (isMobile) {
+				if (joyY !== 0) camera.translateZ(joyY * speed);
+				if (joyX !== 0) camera.translateX(joyX * speed);
 			}
 
-			// Movimento Mobile
-			if (isMobile) {
-				camera.translateZ(joyY * speed);
-				camera.translateX(joyX * speed);
-				camera.position.y = 1.6; // Trava altura
-			}
+			camera.position.y = 1.6;
+			sprite.position.y = 3 + Math.sin(Date.now() * 0.002) * 0.3;
 
-			// Vitória
-			if (camera.position.distanceTo(new THREE.Vector3(targetPos.x, 1.6, targetPos.z)) < 5) {
+			const dist = camera.position.distanceTo(new THREE.Vector3(targetPos.x, 1.6, targetPos.z));
+			if (dist < 5) {
 				document.getElementById('win-screen').style.display = 'flex';
-				if(!isMobile) controls.unlock();
+				joyZone.style.display = 'none';
+				if (!isMobile) controls.unlock();
 			}
 
 			renderer.render(scene, camera);
 		}
-		camera.position.set(0, 1.6, 5);
 		animate();
+
+		window.addEventListener('resize', () => {
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+			renderer.setSize(window.innerWidth, window.innerHeight);
+		});
 	</script>
 </body>
 </html>
