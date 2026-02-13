@@ -3,55 +3,57 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-	<title>A Missão de Ana</title>
+	<title>O Jardim da Ana</title>
 	<style>
-		body { margin: 0; overflow: hidden; background: #87cefa; touch-action: none; font-family: sans-serif; }
+		body { margin: 0; overflow: hidden; background: #87ceeb; touch-action: none; font-family: 'Segoe UI', sans-serif; }
 		
 		#ui {
 			position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-			color: #333; text-align: center; background: rgba(255, 255, 255, 0.95);
-			padding: 40px; border-radius: 20px; border: 3px solid #ff69b4;
-			cursor: pointer; z-index: 10; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-			width: 80%; max-width: 400px;
+			color: #4a2e1b; text-align: center; background: rgba(255, 255, 255, 0.9);
+			padding: 40px; border-radius: 25px; border: 4px solid #ffb6c1;
+			cursor: pointer; z-index: 10; box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+			width: 85%; max-width: 350px; backdrop-filter: blur(10px);
 		}
 
+		h1 { margin: 0 0 10px 0; color: #ff69b4; font-size: 2rem; }
+		p { margin: 5px 0; font-size: 1.1rem; }
+
 		#joystick-zone {
-			display: none; position: absolute; bottom: 30px; left: 30px;
-			width: 120px; height: 120px; background: rgba(255, 255, 255, 0.4);
-			border-radius: 50%; border: 2px solid rgba(255, 105, 180, 0.5); z-index: 5;
+			display: none; position: absolute; bottom: 40px; left: 40px;
+			width: 130px; height: 130px; background: rgba(255, 255, 255, 0.3);
+			border-radius: 50%; border: 2px solid rgba(255, 255, 255, 0.8); z-index: 5;
+			backdrop-filter: blur(5px);
 		}
 		#joystick-knob {
-			position: absolute; top: 35px; left: 35px;
+			position: absolute; top: 40px; left: 40px;
 			width: 50px; height: 50px; background: #ff69b4;
-			border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+			border-radius: 50%; box-shadow: 0 4px 15px rgba(255, 105, 180, 0.5);
 		}
 
 		#win-screen {
 			display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-			background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
-			color: #ff1493; flex-direction: column; justify-content: center; align-items: center;
-			z-index: 100; text-align: center;
+			background: radial-gradient(circle at center, rgba(255,182,193,0.95) 0%, rgba(135,206,235,0.95) 100%);
+			color: #fff; flex-direction: column; justify-content: center; align-items: center;
+			z-index: 100; text-align: center; backdrop-filter: blur(10px);
 		}
 
-		.btn { margin-top: 20px; padding: 15px 30px; background: #ff69b4; color: white; border: none; border-radius: 30px; font-weight: bold; font-size: 1.2rem; cursor: pointer; }
+		.btn { margin-top: 30px; padding: 15px 40px; background: #fff; color: #ff69b4; border: none; border-radius: 30px; font-weight: bold; font-size: 1.2rem; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
 	</style>
 </head>
 <body>
 
 	<div id="ui">
-		<h1>🌸 Jardim Feliz 🌸</h1>
-		<p>Ana, explore este mundo e encontre sua surpresa!</p>
-		<p><strong>Toque para começar</strong></p>
+		<h1>🌸 O Jardim de Ana</h1>
+		<p>Um lugar criado só para você.</p>
+		<p><strong>Toque para explorar</strong></p>
 	</div>
 
-	<div id="joystick-zone">
-		<div id="joystick-knob"></div>
-	</div>
+	<div id="joystick-zone"><div id="joystick-knob"></div></div>
 
 	<div id="win-screen">
-		<h1 style="font-size: 3rem; text-shadow: 2px 2px 10px rgba(255,255,255,0.8);">ANA, EU TE AMO! ❤️</h1>
-		<p style="font-size: 1.2rem; color: #555;">Você deixa meu mundo mais colorido.</p>
-		<button class="btn" onclick="location.reload()">Jogar de novo</button>
+		<h1 style="font-size: 3.5rem; text-shadow: 0 0 20px #ff69b4; margin-bottom: 0;">ANA, EU TE AMO! ❤️</h1>
+		<p style="font-size: 1.5rem; text-shadow: 0 2px 5px rgba(0,0,0,0.2);">Você encontrou o que sinto por você.</p>
+		<button class="btn" onclick="location.reload()">Recomeçar</button>
 	</div>
 
 	<script type="importmap">
@@ -66,100 +68,111 @@
 	<script type="module">
 		import * as THREE from 'three';
 		import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
+		import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+		import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+		import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 
-		// 1. Configuração Principal - Dia Claro e Feliz
+		const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
+
 		const scene = new THREE.Scene();
-		scene.background = new THREE.Color(0x87cefa); // Azul Céu
-		scene.fog = new THREE.FogExp2(0x87cefa, 0.015);
+		scene.background = new THREE.Color(0x87ceeb);
+		scene.fog = new THREE.FogExp2(0x87ceeb, 0.012);
 
-		const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
-		const renderer = new THREE.WebGLRenderer({ antialias: true });
+		const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 1000);
+		
+		const renderer = new THREE.WebGLRenderer({ antialias: !isMobile });
+		renderer.setPixelRatio(isMobile ? Math.min(window.devicePixelRatio, 1.5) : window.devicePixelRatio);
 		renderer.setSize(window.innerWidth, window.innerHeight);
-		renderer.shadowMap.enabled = true;
-		renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 		document.body.appendChild(renderer.domElement);
 
-		// 2. Iluminação Ensolarada
-		scene.add(new THREE.AmbientLight(0xffffff, 1.2)); 
-		
-		const sunLight = new THREE.DirectionalLight(0xffffff, 1.5); 
-		sunLight.position.set(50, 100, 50); 
-		sunLight.castShadow = true;
-		sunLight.shadow.camera.left = -60; sunLight.shadow.camera.right = 60;
-		sunLight.shadow.camera.top = 60; sunLight.shadow.camera.bottom = -60;
-		scene.add(sunLight);
+		const renderScene = new RenderPass(scene, camera);
+		const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
+		bloomPass.threshold = 0.9;
+		bloomPass.strength = 0.6;
+		bloomPass.radius = 0.5;
 
-		// 3. Chão de Grama Viva
-		const floorMat = new THREE.MeshStandardMaterial({ color: 0x7cfc00, roughness: 1 });
-		const floor = new THREE.Mesh(new THREE.PlaneGeometry(300, 300), floorMat);
+		const composer = new EffectComposer(renderer);
+		composer.addPass(renderScene);
+		composer.addPass(bloomPass);
+
+		scene.add(new THREE.AmbientLight(0xffffff, 0.7)); 
+		const sun = new THREE.DirectionalLight(0xfff0f5, 1.0);
+		sun.position.set(50, 100, 20);
+		scene.add(sun);
+
+		const floor = new THREE.Mesh(
+			new THREE.PlaneGeometry(400, 400), 
+			new THREE.MeshLambertMaterial({ color: 0x7cfc00 })
+		);
 		floor.rotation.x = -Math.PI / 2;
-		floor.receiveShadow = true;
 		scene.add(floor);
 
-		// 4. Floresta Feliz (InstancedMesh)
-		const treeCount = 400;
-		const trunkGeo = new THREE.CylinderGeometry(0.3, 0.5, 4);
-		const leavesGeo = new THREE.SphereGeometry(2.5, 8, 8); // Copas redondas/fofas
+		const treeCount = isMobile ? 300 : 500;
+		const trunkGeo = new THREE.CylinderGeometry(0.4, 0.6, 5, 5);
+		const leavesGeo = new THREE.IcosahedronGeometry(3, 0);
 		
-		const trunks = new THREE.InstancedMesh(trunkGeo, new THREE.MeshStandardMaterial({ color: 0x8b4513 }), treeCount);
-		const leaves = new THREE.InstancedMesh(leavesGeo, new THREE.MeshStandardMaterial({ color: 0x32cd32 }), treeCount);
-		trunks.castShadow = true; leaves.castShadow = true;
-		trunks.receiveShadow = true; leaves.receiveShadow = true;
+		const trunks = new THREE.InstancedMesh(trunkGeo, new THREE.MeshLambertMaterial({ color: 0x8b4513 }), treeCount);
+		const leaves = new THREE.InstancedMesh(leavesGeo, new THREE.MeshLambertMaterial({ color: 0x32cd32 }), treeCount);
 
 		const dummy = new THREE.Object3D();
 		for (let i = 0; i < treeCount; i++) {
-			const x = (Math.random() - 0.5) * 200;
-			const z = (Math.random() - 0.5) * 200;
-			if (Math.abs(x) < 8 || (x*x + z*z) < 40) continue; // Caminho bem livre
+			const x = (Math.random() - 0.5) * 250;
+			const z = (Math.random() - 0.5) * 250;
+			if (Math.abs(x) < 10 || (x*x + z*z) < 50) continue;
 			
-			const scale = 0.8 + Math.random() * 0.7;
-			dummy.position.set(x, 2 * scale, z);
+			const scale = 0.7 + Math.random() * 0.8;
+			
+			// Tronco: Resetando a rotação para nascer reto
+			dummy.position.set(x, 2.5 * scale, z);
+			dummy.rotation.set(0, 0, 0); 
 			dummy.scale.set(scale, scale, scale);
 			dummy.updateMatrix();
 			trunks.setMatrixAt(i, dummy.matrix);
 
-			dummy.position.set(x, 5 * scale, z);
-			dummy.rotation.y = Math.random() * Math.PI;
+			// Folhas: Mantendo a rotação orgânica
+			dummy.position.set(x, 6 * scale, z);
+			dummy.rotation.set(Math.random(), Math.random(), 0);
 			dummy.updateMatrix();
 			leaves.setMatrixAt(i, dummy.matrix);
 		}
 		scene.add(trunks, leaves);
 
-		// 5. Jardim de Flores Coloridas
-		const flowerColors = [0xff69b4, 0xffd700, 0xffffff]; // Rosa, Amarelo, Branco
-		const flowerGeo = new THREE.SphereGeometry(0.3, 5, 5);
-		flowerColors.forEach(color => {
-			const flowerMat = new THREE.MeshStandardMaterial({ color: color });
-			const flowers = new THREE.InstancedMesh(flowerGeo, flowerMat, 300);
-			for (let i = 0; i < 300; i++) {
-				const x = (Math.random() - 0.5) * 200;
-				const z = (Math.random() - 0.5) * 200;
-				if (Math.abs(x) < 4) continue; // Evita o centro exato
-				dummy.position.set(x, 0.2, z);
-				dummy.updateMatrix();
-				flowers.setMatrixAt(i, dummy.matrix);
-			}
-			scene.add(flowers);
-		});
+		const partCount = isMobile ? 200 : 500;
+		const partGeo = new THREE.BufferGeometry();
+		const partPos = new Float32Array(partCount * 3);
+		const partPhases = new Float32Array(partCount);
 
-		// 6. O Alvo Brilhante
+		for(let i=0; i < partCount; i++) {
+			partPos[i*3] = (Math.random() - 0.5) * 100;
+			partPos[i*3+1] = Math.random() * 10;
+			partPos[i*3+2] = (Math.random() - 0.5) * 100;
+			partPhases[i] = Math.random() * Math.PI * 2;
+		}
+		partGeo.setAttribute('position', new THREE.BufferAttribute(partPos, 3));
+		partGeo.setAttribute('phase', new THREE.BufferAttribute(partPhases, 1));
+
+		const partMat = new THREE.PointsMaterial({ color: new THREE.Color(2, 2, 2), size: 0.3 });
+		const particles = new THREE.Points(partGeo, partMat);
+		scene.add(particles);
+
 		const targetPos = { x: 0, z: -80 };
 		const canvas = document.createElement('canvas');
 		const ctx = canvas.getContext('2d');
 		canvas.width = 1024; canvas.height = 256;
-		ctx.fillStyle = '#ff1493'; ctx.font = 'bold 90px sans-serif'; ctx.textAlign = 'center';
-		ctx.shadowColor = "#ffffff"; ctx.shadowBlur = 20; // Brilho branco ao redor do texto rosa
+		
+		ctx.fillStyle = '#ffffff'; 
+		ctx.font = 'bold 90px sans-serif'; 
+		ctx.textAlign = 'center';
 		ctx.fillText('✨ ANA, EU TE AMO! ✨', 512, 128);
 
-		const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(canvas) }));
+		const textTex = new THREE.CanvasTexture(canvas);
+		const spriteMat = new THREE.SpriteMaterial({ map: textTex, color: new THREE.Color(1.5, 0.5, 1.0) }); 
+		const sprite = new THREE.Sprite(spriteMat);
 		sprite.scale.set(15, 3.5, 1);
 		sprite.position.set(targetPos.x, 3, targetPos.z);
 		scene.add(sprite);
 
-		// 7. Controles
 		const controls = new PointerLockControls(camera, document.body);
-		const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
-		
 		const ui = document.getElementById('ui');
 		const joyZone = document.getElementById('joystick-zone');
 		const knob = document.getElementById('joystick-knob');
@@ -170,29 +183,24 @@
 			if (isMobile) joyZone.style.display = 'block';
 		});
 
-		// Lógica PC
 		let keys = { w: false, s: false, a: false, d: false };
 		document.addEventListener('keydown', e => { if(keys[e.key.toLowerCase()] !== undefined) keys[e.key.toLowerCase()] = true; });
 		document.addEventListener('keyup', e => { if(keys[e.key.toLowerCase()] !== undefined) keys[e.key.toLowerCase()] = false; });
 
-		// Lógica Mobile
 		let joyTouchId = null, lookTouchId = null;
 		let joyX = 0, joyY = 0;
 		let lastLookX = 0, lastLookY = 0;
-		const maxJoyDist = 40;
+		const maxJoyDist = 45;
 
 		document.addEventListener('touchstart', e => {
 			for (let i = 0; i < e.changedTouches.length; i++) {
 				const touch = e.changedTouches[i];
-				const joyRect = joyZone.getBoundingClientRect();
-				
-				if (touch.clientX >= joyRect.left && touch.clientX <= joyRect.right && 
-					touch.clientY >= joyRect.top && touch.clientY <= joyRect.bottom) {
+				const rect = joyZone.getBoundingClientRect();
+				if (touch.clientX >= rect.left && touch.clientX <= rect.right && touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
 					joyTouchId = touch.identifier;
 				} else if (touch.clientX > window.innerWidth / 2) {
 					lookTouchId = touch.identifier;
-					lastLookX = touch.clientX;
-					lastLookY = touch.clientY;
+					lastLookX = touch.clientX; lastLookY = touch.clientY;
 				}
 			}
 		}, { passive: false });
@@ -200,58 +208,43 @@
 		document.addEventListener('touchmove', e => {
 			for (let i = 0; i < e.changedTouches.length; i++) {
 				const touch = e.changedTouches[i];
-				
 				if (touch.identifier === joyTouchId) {
 					e.preventDefault();
 					const rect = joyZone.getBoundingClientRect();
-					const centerX = rect.left + rect.width / 2;
-					const centerY = rect.top + rect.height / 2;
-					
-					let dx = touch.clientX - centerX;
-					let dy = touch.clientY - centerY;
-					const distance = Math.min(maxJoyDist, Math.sqrt(dx*dx + dy*dy));
+					let dx = touch.clientX - (rect.left + rect.width / 2);
+					let dy = touch.clientY - (rect.top + rect.height / 2);
+					const dist = Math.min(maxJoyDist, Math.sqrt(dx*dx + dy*dy));
 					const angle = Math.atan2(dy, dx);
-					
-					const knobX = Math.cos(angle) * distance;
-					const knobY = Math.sin(angle) * distance;
-					knob.style.transform = `translate(${knobX}px, ${knobY}px)`;
-					
-					joyX = knobX / maxJoyDist;
-					joyY = knobY / maxJoyDist;
+					const kX = Math.cos(angle) * dist; const kY = Math.sin(angle) * dist;
+					knob.style.transform = `translate(${kX}px, ${kY}px)`;
+					joyX = kX / maxJoyDist; joyY = kY / maxJoyDist;
 				} else if (touch.identifier === lookTouchId) {
 					e.preventDefault();
-					const deltaX = touch.clientX - lastLookX;
-					const deltaY = touch.clientY - lastLookY;
-					
-					camera.rotation.y -= deltaX * 0.004;
-					camera.rotation.x -= deltaY * 0.004;
+					camera.rotation.y -= (touch.clientX - lastLookX) * 0.004;
+					camera.rotation.x -= (touch.clientY - lastLookY) * 0.004;
 					camera.rotation.x = Math.max(-Math.PI/2, Math.min(Math.PI/2, camera.rotation.x));
-					
-					lastLookX = touch.clientX;
-					lastLookY = touch.clientY;
+					lastLookX = touch.clientX; lastLookY = touch.clientY;
 				}
 			}
 		}, { passive: false });
 
 		document.addEventListener('touchend', e => {
 			for (let i = 0; i < e.changedTouches.length; i++) {
-				const touch = e.changedTouches[i];
-				if (touch.identifier === joyTouchId) {
-					joyTouchId = null; joyX = 0; joyY = 0;
-					knob.style.transform = `translate(0px, 0px)`;
+				if (e.changedTouches[i].identifier === joyTouchId) {
+					joyTouchId = null; joyX = 0; joyY = 0; knob.style.transform = `translate(0, 0)`;
 				}
-				if (touch.identifier === lookTouchId) lookTouchId = null;
+				if (e.changedTouches[i].identifier === lookTouchId) lookTouchId = null;
 			}
 		});
 
-		// 8. Loop Principal
 		const clock = new THREE.Clock();
-		camera.position.set(0, 1.6, 5);
+		camera.position.set(0, 1.8, 5);
 		camera.rotation.order = 'YXZ';
 
 		function animate() {
 			requestAnimationFrame(animate);
 			const delta = clock.getDelta();
+			const time = clock.getElapsedTime();
 			const speed = 20 * delta;
 
 			if (controls.isLocked) {
@@ -263,18 +256,25 @@
 				if (joyY !== 0) camera.translateZ(joyY * speed);
 				if (joyX !== 0) camera.translateX(joyX * speed);
 			}
+			camera.position.y = 1.8;
 
-			camera.position.y = 1.6;
-			sprite.position.y = 3 + Math.sin(Date.now() * 0.002) * 0.3;
+			const posAttr = particles.geometry.attributes.position;
+			const phaseAttr = particles.geometry.attributes.phase;
+			for(let i=0; i<partCount; i++) {
+				posAttr.array[i*3+1] += Math.sin(time * 2 + phaseAttr.array[i]) * 0.02;
+			}
+			posAttr.needsUpdate = true;
+			particles.rotation.y = time * 0.05;
 
-			const dist = camera.position.distanceTo(new THREE.Vector3(targetPos.x, 1.6, targetPos.z));
-			if (dist < 5) {
+			sprite.position.y = 3.5 + Math.sin(time * 2) * 0.3;
+
+			if (camera.position.distanceTo(new THREE.Vector3(targetPos.x, 1.8, targetPos.z)) < 6) {
 				document.getElementById('win-screen').style.display = 'flex';
 				joyZone.style.display = 'none';
 				if (!isMobile) controls.unlock();
 			}
 
-			renderer.render(scene, camera);
+			composer.render();
 		}
 		animate();
 
@@ -282,6 +282,7 @@
 			camera.aspect = window.innerWidth / window.innerHeight;
 			camera.updateProjectionMatrix();
 			renderer.setSize(window.innerWidth, window.innerHeight);
+			composer.setSize(window.innerWidth, window.innerHeight);
 		});
 	</script>
 </body>
