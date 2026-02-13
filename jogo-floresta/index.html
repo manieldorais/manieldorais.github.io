@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-	<title>O Jardim da Ana</title>
+	<title>A Jornada da Ana</title>
 	<style>
 		body { margin: 0; overflow: hidden; background: #87ceeb; touch-action: none; font-family: 'Segoe UI', sans-serif; }
 		
@@ -44,7 +44,7 @@
 
 	<div id="ui">
 		<h1>🌸 O Jardim de Ana</h1>
-		<p>Um lugar criado só para você.</p>
+		<p>Guie a Ana até a surpresa!</p>
 		<p><strong>Toque para explorar</strong></p>
 	</div>
 
@@ -52,7 +52,7 @@
 
 	<div id="win-screen">
 		<h1 style="font-size: 3.5rem; text-shadow: 0 0 20px #ff69b4; margin-bottom: 0;">ANA, EU TE AMO! ❤️</h1>
-		<p style="font-size: 1.5rem; text-shadow: 0 2px 5px rgba(0,0,0,0.2);">Você encontrou o que sinto por você.</p>
+		<p style="font-size: 1.5rem; text-shadow: 0 2px 5px rgba(0,0,0,0.2);">Você chegou ao seu destino.</p>
 		<button class="btn" onclick="location.reload()">Recomeçar</button>
 	</div>
 
@@ -67,7 +67,6 @@
 
 	<script type="module">
 		import * as THREE from 'three';
-		import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
 		import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 		import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 		import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
@@ -76,9 +75,9 @@
 
 		const scene = new THREE.Scene();
 		scene.background = new THREE.Color(0x87ceeb);
-		scene.fog = new THREE.FogExp2(0x87ceeb, 0.012);
+		scene.fog = new THREE.FogExp2(0x87ceeb, 0.005);
 
-		const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 1000);
+		const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 1500);
 		
 		const renderer = new THREE.WebGLRenderer({ antialias: !isMobile });
 		renderer.setPixelRatio(isMobile ? Math.min(window.devicePixelRatio, 1.5) : window.devicePixelRatio);
@@ -87,9 +86,7 @@
 
 		const renderScene = new RenderPass(scene, camera);
 		const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
-		bloomPass.threshold = 0.9;
-		bloomPass.strength = 0.6;
-		bloomPass.radius = 0.5;
+		bloomPass.threshold = 0.9; bloomPass.strength = 0.6; bloomPass.radius = 0.5;
 
 		const composer = new EffectComposer(renderer);
 		composer.addPass(renderScene);
@@ -100,190 +97,170 @@
 		sun.position.set(50, 100, 20);
 		scene.add(sun);
 
-		const floor = new THREE.Mesh(
-			new THREE.PlaneGeometry(400, 400), 
-			new THREE.MeshLambertMaterial({ color: 0x7cfc00 })
-		);
+		const floor = new THREE.Mesh(new THREE.PlaneGeometry(600, 2500), new THREE.MeshLambertMaterial({ color: 0x7cfc00 }));
 		floor.rotation.x = -Math.PI / 2;
 		scene.add(floor);
 
-		const treeCount = isMobile ? 300 : 500;
+		// --- PERSONAGEM ANA ---
+		const player = new THREE.Group();
+		
+		const bodyGeo = new THREE.CylinderGeometry(0.35, 0.6, 1.1, 16);
+		const bodyMat = new THREE.MeshLambertMaterial({ color: 0xff69b4 }); 
+		const body = new THREE.Mesh(bodyGeo, bodyMat);
+		body.position.y = 0.55;
+		player.add(body);
+
+		const headGeo = new THREE.SphereGeometry(0.55, 24, 24);
+		const headMat = new THREE.MeshLambertMaterial({ color: 0xffe0bd });
+		const head = new THREE.Mesh(headGeo, headMat);
+		head.position.y = 1.5;
+		player.add(head);
+
+		// Olhinhos (Para frente ser no eixo -Z)
+		const eyeGeo = new THREE.SphereGeometry(0.06, 8, 8);
+		const eyeMat = new THREE.MeshBasicMaterial({ color: 0x222222 });
+		const eyeL = new THREE.Mesh(eyeGeo, eyeMat); eyeL.position.set(-0.2, 1.55, -0.5);
+		const eyeR = new THREE.Mesh(eyeGeo, eyeMat); eyeR.position.set(0.2, 1.55, -0.5);
+		player.add(eyeL, eyeR);
+
+		const hairGroup = new THREE.Group();
+		const curlGeo = new THREE.SphereGeometry(0.18, 8, 8);
+		const hairMat = new THREE.MeshLambertMaterial({ color: 0x0a0a0a });
+
+		const hairBase = new THREE.Mesh(new THREE.SphereGeometry(0.53, 16, 16), hairMat);
+		hairBase.position.set(0, 1.55, 0.05);
+		hairGroup.add(hairBase);
+
+		for (let a = 0; a < Math.PI * 2; a += 0.4) {
+			for (let polar = 0; polar < Math.PI / 2 + 0.2; polar += 0.4) {
+				if (polar > 0.8 && a > Math.PI * 0.7 && a < Math.PI * 1.3) continue;
+				const curl = new THREE.Mesh(curlGeo, hairMat);
+				const r = 0.55;
+				curl.position.set(Math.sin(polar)*Math.sin(a)*r+(Math.random()-0.5)*0.1, 1.5+Math.cos(polar)*r+(Math.random()-0.5)*0.1, Math.sin(polar)*Math.cos(a)*r+(Math.random()-0.5)*0.1);
+				hairGroup.add(curl);
+			}
+		}
+
+		for (let y = 1.4; y > 0.1; y -= 0.15) {
+			for (let a = -Math.PI * 0.4; a <= Math.PI * 0.4; a += 0.3) {
+				const curl = new THREE.Mesh(curlGeo, hairMat);
+				const radius = 0.55;
+				curl.position.set(Math.sin(a)*radius+(Math.random()-0.5)*0.2, y, Math.cos(a)*radius+0.15+(Math.random()-0.5)*0.2);
+				hairGroup.add(curl);
+			}
+		}
+		
+		player.add(hairGroup);
+		player.scale.set(0.6, 0.6, 0.6); 
+		scene.add(player);
+
+		// --- FLORESTA ---
+		const treeCount = isMobile ? 800 : 1500;
 		const trunkGeo = new THREE.CylinderGeometry(0.4, 0.6, 5, 5);
 		const leavesGeo = new THREE.IcosahedronGeometry(3, 0);
-		
 		const trunks = new THREE.InstancedMesh(trunkGeo, new THREE.MeshLambertMaterial({ color: 0x8b4513 }), treeCount);
 		const leaves = new THREE.InstancedMesh(leavesGeo, new THREE.MeshLambertMaterial({ color: 0x32cd32 }), treeCount);
-
 		const dummy = new THREE.Object3D();
+		
 		for (let i = 0; i < treeCount; i++) {
-			const x = (Math.random() - 0.5) * 250;
-			const z = (Math.random() - 0.5) * 250;
-			if (Math.abs(x) < 10 || (x*x + z*z) < 50) continue;
-			
+			let x, z;
+			do { x = (Math.random() - 0.5) * 400; z = - (Math.random() * 1200) + 100; } while (Math.abs(x) < 12 || Math.sqrt(x*x + z*z) < 25);
 			const scale = 0.7 + Math.random() * 0.8;
-			
-			// Tronco: Resetando a rotação para nascer reto
-			dummy.position.set(x, 2.5 * scale, z);
-			dummy.rotation.set(0, 0, 0); 
-			dummy.scale.set(scale, scale, scale);
-			dummy.updateMatrix();
-			trunks.setMatrixAt(i, dummy.matrix);
-
-			// Folhas: Mantendo a rotação orgânica
-			dummy.position.set(x, 6 * scale, z);
-			dummy.rotation.set(Math.random(), Math.random(), 0);
-			dummy.updateMatrix();
-			leaves.setMatrixAt(i, dummy.matrix);
+			dummy.position.set(x, 2.5 * scale, z); dummy.rotation.set(0, 0, 0); dummy.scale.set(scale, scale, scale); dummy.updateMatrix(); trunks.setMatrixAt(i, dummy.matrix);
+			dummy.position.set(x, 6 * scale, z); dummy.rotation.set(Math.random(), Math.random(), 0); dummy.updateMatrix(); leaves.setMatrixAt(i, dummy.matrix);
 		}
 		scene.add(trunks, leaves);
 
-		const partCount = isMobile ? 200 : 500;
+		const partCount = isMobile ? 400 : 800;
 		const partGeo = new THREE.BufferGeometry();
 		const partPos = new Float32Array(partCount * 3);
 		const partPhases = new Float32Array(partCount);
-
 		for(let i=0; i < partCount; i++) {
-			partPos[i*3] = (Math.random() - 0.5) * 100;
-			partPos[i*3+1] = Math.random() * 10;
-			partPos[i*3+2] = (Math.random() - 0.5) * 100;
-			partPhases[i] = Math.random() * Math.PI * 2;
+			partPos[i*3] = (Math.random() - 0.5) * 200; partPos[i*3+1] = Math.random() * 10; partPos[i*3+2] = - (Math.random() * 1000) + 50; partPhases[i] = Math.random() * Math.PI * 2;
 		}
 		partGeo.setAttribute('position', new THREE.BufferAttribute(partPos, 3));
 		partGeo.setAttribute('phase', new THREE.BufferAttribute(partPhases, 1));
-
-		const partMat = new THREE.PointsMaterial({ color: new THREE.Color(2, 2, 2), size: 0.3 });
-		const particles = new THREE.Points(partGeo, partMat);
+		const particles = new THREE.Points(partGeo, new THREE.PointsMaterial({ color: new THREE.Color(2, 2, 2), size: 0.3 }));
 		scene.add(particles);
 
-		const targetPos = { x: 0, z: -80 };
-		const canvas = document.createElement('canvas');
-		const ctx = canvas.getContext('2d');
-		canvas.width = 1024; canvas.height = 256;
+		function createTextSprite(text, colorStr, scale, glowColorStr) {
+			const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
+			canvas.width = 1024; canvas.height = 256; ctx.fillStyle = colorStr; ctx.font = 'bold 80px sans-serif'; ctx.textAlign = 'center';
+			if (glowColorStr) { ctx.shadowColor = glowColorStr; ctx.shadowBlur = 20; }
+			ctx.fillText(text, 512, 128);
+			const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(canvas), color: new THREE.Color(1.2, 1.2, 1.2) }));
+			sprite.scale.set(scale, scale * 0.25, 1); return sprite;
+		}
 		
-		ctx.fillStyle = '#ffffff'; 
-		ctx.font = 'bold 90px sans-serif'; 
-		ctx.textAlign = 'center';
-		ctx.fillText('✨ ANA, EU TE AMO! ✨', 512, 128);
+		const hintSprites = [];
+		const hintsData = [{t:'A jornada começou...', z:-150}, {t:'Siga em frente...', z:-350}, {t:'Você está no caminho certo...', z:-550}, {t:'Falta pouco...', z:-750}];
+		hintsData.forEach(d=>{const h=createTextSprite(d.t,'#fff',15);h.position.set(0,3,d.z);scene.add(h);hintSprites.push(h);});
+		
+		const targetPos = { x: 0, z: -1000 };
+		const finalSprite = createTextSprite('✨ ANA, EU TE AMO! ✨', '#fff', 20, '#fff');
+		finalSprite.material.color = new THREE.Color(1.5, 0.5, 1.0); finalSprite.position.set(targetPos.x, 4, targetPos.z); scene.add(finalSprite);
 
-		const textTex = new THREE.CanvasTexture(canvas);
-		const spriteMat = new THREE.SpriteMaterial({ map: textTex, color: new THREE.Color(1.5, 0.5, 1.0) }); 
-		const sprite = new THREE.Sprite(spriteMat);
-		sprite.scale.set(15, 3.5, 1);
-		sprite.position.set(targetPos.x, 3, targetPos.z);
-		scene.add(sprite);
-
-		const controls = new PointerLockControls(camera, document.body);
-		const ui = document.getElementById('ui');
-		const joyZone = document.getElementById('joystick-zone');
-		const knob = document.getElementById('joystick-knob');
-
-		ui.addEventListener('click', () => {
-			if (!isMobile) controls.lock();
-			ui.style.display = 'none';
-			if (isMobile) joyZone.style.display = 'block';
-		});
-
+		// --- CONTROLES ---
+		const ui = document.getElementById('ui'); const joyZone = document.getElementById('joystick-zone'); const knob = document.getElementById('joystick-knob');
+		let camAngle = Math.PI; 
+		let isWalking = false;
+		ui.addEventListener('click', () => { ui.style.display = 'none'; joyZone.style.display = 'block'; });
 		let keys = { w: false, s: false, a: false, d: false };
 		document.addEventListener('keydown', e => { if(keys[e.key.toLowerCase()] !== undefined) keys[e.key.toLowerCase()] = true; });
 		document.addEventListener('keyup', e => { if(keys[e.key.toLowerCase()] !== undefined) keys[e.key.toLowerCase()] = false; });
+		let joyTouchId=null, lookTouchId=null, joyX=0, joyY=0, lastLookX=0; const maxJoyDist=45;
+		
+		document.addEventListener('touchstart', e=>{for(let i=0;i<e.changedTouches.length;i++){const t=e.changedTouches[i];const r=joyZone.getBoundingClientRect();if(t.clientX>=r.left&&t.clientX<=r.right&&t.clientY>=r.top&&t.clientY<=r.bottom)joyTouchId=t.identifier;else if(t.clientX>window.innerWidth/2){lookTouchId=t.identifier;lastLookX=t.clientX;}}}, {passive:false});
+		document.addEventListener('touchmove', e=>{for(let i=0;i<e.changedTouches.length;i++){const t=e.changedTouches[i];if(t.identifier===joyTouchId){e.preventDefault();const r=joyZone.getBoundingClientRect();let dx=t.clientX-(r.left+r.width/2), dy=t.clientY-(r.top+r.height/2);const d=Math.min(maxJoyDist,Math.sqrt(dx*dx+dy*dy)), a=Math.atan2(dy,dx);const kX=Math.cos(a)*d, kY=Math.sin(a)*d;knob.style.transform=`translate(${kX}px,${kY}px)`;joyX=kX/maxJoyDist;joyY=kY/maxJoyDist;}else if(t.identifier===lookTouchId){e.preventDefault();camAngle-=(t.clientX-lastLookX)*0.01;lastLookX=t.clientX;}}}, {passive:false});
+		document.addEventListener('touchend', e=>{for(let i=0;i<e.changedTouches.length;i++){if(e.changedTouches[i].identifier===joyTouchId){joyTouchId=null;joyX=0;joyY=0;knob.style.transform=`translate(0,0)`;}if(e.changedTouches[i].identifier===lookTouchId)lookTouchId=null;}});
 
-		let joyTouchId = null, lookTouchId = null;
-		let joyX = 0, joyY = 0;
-		let lastLookX = 0, lastLookY = 0;
-		const maxJoyDist = 45;
-
-		document.addEventListener('touchstart', e => {
-			for (let i = 0; i < e.changedTouches.length; i++) {
-				const touch = e.changedTouches[i];
-				const rect = joyZone.getBoundingClientRect();
-				if (touch.clientX >= rect.left && touch.clientX <= rect.right && touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
-					joyTouchId = touch.identifier;
-				} else if (touch.clientX > window.innerWidth / 2) {
-					lookTouchId = touch.identifier;
-					lastLookX = touch.clientX; lastLookY = touch.clientY;
-				}
-			}
-		}, { passive: false });
-
-		document.addEventListener('touchmove', e => {
-			for (let i = 0; i < e.changedTouches.length; i++) {
-				const touch = e.changedTouches[i];
-				if (touch.identifier === joyTouchId) {
-					e.preventDefault();
-					const rect = joyZone.getBoundingClientRect();
-					let dx = touch.clientX - (rect.left + rect.width / 2);
-					let dy = touch.clientY - (rect.top + rect.height / 2);
-					const dist = Math.min(maxJoyDist, Math.sqrt(dx*dx + dy*dy));
-					const angle = Math.atan2(dy, dx);
-					const kX = Math.cos(angle) * dist; const kY = Math.sin(angle) * dist;
-					knob.style.transform = `translate(${kX}px, ${kY}px)`;
-					joyX = kX / maxJoyDist; joyY = kY / maxJoyDist;
-				} else if (touch.identifier === lookTouchId) {
-					e.preventDefault();
-					camera.rotation.y -= (touch.clientX - lastLookX) * 0.004;
-					camera.rotation.x -= (touch.clientY - lastLookY) * 0.004;
-					camera.rotation.x = Math.max(-Math.PI/2, Math.min(Math.PI/2, camera.rotation.x));
-					lastLookX = touch.clientX; lastLookY = touch.clientY;
-				}
-			}
-		}, { passive: false });
-
-		document.addEventListener('touchend', e => {
-			for (let i = 0; i < e.changedTouches.length; i++) {
-				if (e.changedTouches[i].identifier === joyTouchId) {
-					joyTouchId = null; joyX = 0; joyY = 0; knob.style.transform = `translate(0, 0)`;
-				}
-				if (e.changedTouches[i].identifier === lookTouchId) lookTouchId = null;
-			}
-		});
-
+		// --- LOOP PRINCIPAL ---
 		const clock = new THREE.Clock();
-		camera.position.set(0, 1.8, 5);
-		camera.rotation.order = 'YXZ';
-
 		function animate() {
 			requestAnimationFrame(animate);
 			const delta = clock.getDelta();
-			const time = clock.getElapsedTime();
-			const speed = 20 * delta;
+			const time = clock.elapsedTime;
+			const speed = 25 * delta; 
+			
+			let moveX=0, moveZ=0; isWalking=false;
+			
+			if (keys.w) { moveZ = 1; isWalking = true; } 
+			if (keys.s) { moveZ = -1; isWalking = true; }
+			if (keys.a) { moveX = 1; isWalking = true; }
+			if (keys.d) { moveX = -1; isWalking = true; }
+			if (joyX!==0||joyY!==0) { moveX = -joyX; moveZ = -joyY; isWalking = true; } 
 
-			if (controls.isLocked) {
-				if (keys.w) controls.moveForward(speed);
-				if (keys.s) controls.moveForward(-speed);
-				if (keys.a) controls.moveRight(-speed);
-				if (keys.d) controls.moveRight(speed);
-			} else if (isMobile) {
-				if (joyY !== 0) camera.translateZ(joyY * speed);
-				if (joyX !== 0) camera.translateX(joyX * speed);
-			}
-			camera.position.y = 1.8;
+			if (isWalking) {
+				const moveAngle = Math.atan2(moveX, moveZ);
+				const targetRotation = camAngle + moveAngle;
+				
+				// O SEGREDO AQUI: + Math.PI para ela virar para a frente corretamente
+				player.rotation.y = targetRotation + Math.PI;
+				
+				player.position.x += Math.sin(targetRotation) * speed;
+				player.position.z += Math.cos(targetRotation) * speed;
+				player.position.y = Math.abs(Math.sin(time * 15)) * 0.12; 
+			} else { player.position.y = 0; }
 
-			const posAttr = particles.geometry.attributes.position;
-			const phaseAttr = particles.geometry.attributes.phase;
-			for(let i=0; i<partCount; i++) {
-				posAttr.array[i*3+1] += Math.sin(time * 2 + phaseAttr.array[i]) * 0.02;
-			}
-			posAttr.needsUpdate = true;
-			particles.rotation.y = time * 0.05;
+			// Câmera um pouco mais perto e confortável
+			const camDist = 4; const camHeight = 2.5;
+			camera.position.x = player.position.x - Math.sin(camAngle) * camDist; 
+			camera.position.z = player.position.z - Math.cos(camAngle) * camDist;
+			camera.position.y = player.position.y + camHeight;
+			camera.lookAt(player.position.x, player.position.y + 0.8, player.position.z);
 
-			sprite.position.y = 3.5 + Math.sin(time * 2) * 0.3;
-
-			if (camera.position.distanceTo(new THREE.Vector3(targetPos.x, 1.8, targetPos.z)) < 6) {
-				document.getElementById('win-screen').style.display = 'flex';
-				joyZone.style.display = 'none';
-				if (!isMobile) controls.unlock();
-			}
-
+			const posAttr=particles.geometry.attributes.position, phaseAttr=particles.geometry.attributes.phase;
+			for(let i=0;i<partCount;i++) posAttr.array[i*3+1]+=Math.sin(time*2+phaseAttr.array[i])*0.02;
+			posAttr.needsUpdate=true; particles.rotation.y=time*0.02;
+			
+			hintSprites.forEach((h,i)=>{h.position.y=4+Math.sin(time*2+i)*0.2;}); 
+			finalSprite.position.y=5+Math.sin(time*2)*0.3;
+			
+			if (player.position.distanceTo(new THREE.Vector3(targetPos.x, 0, targetPos.z)) < 12) { document.getElementById('win-screen').style.display = 'flex'; joyZone.style.display = 'none'; }
 			composer.render();
 		}
 		animate();
-
-		window.addEventListener('resize', () => {
-			camera.aspect = window.innerWidth / window.innerHeight;
-			camera.updateProjectionMatrix();
-			renderer.setSize(window.innerWidth, window.innerHeight);
-			composer.setSize(window.innerWidth, window.innerHeight);
-		});
+		window.addEventListener('resize', ()=>{camera.aspect=window.innerWidth/window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth,window.innerHeight); composer.setSize(window.innerWidth,window.innerHeight);});
 	</script>
 </body>
 </html>
