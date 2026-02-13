@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<title>Floresta Encantada da Ana</title>
+	<style>
+		body { margin: 0; overflow: hidden; font-family: 'Segoe UI', sans-serif; background-color: #87CEEB; touch-action: none; }
+		
+		#ui {
+			position: absolute;
+			top: 50%; left: 50%;
+			transform: translate(-50%, -50%);
+			color: #2d5a27;
+			text-align: center;
+			background: rgba(255, 255, 255, 0.9);
+			padding: 30px;
+			border-radius: 20px;
+			border: 4px solid #ff69b4;
+			cursor: pointer;
+			z-index: 10;
+		}
+
+		/* Controles Mobile */
+		#joystick-container {
+			position: absolute;
+			bottom: 50px;
+			left: 50px;
+			width: 120px;
+			height: 120px;
+			background: rgba(255, 255, 255, 0.2);
+			border-radius: 50%;
+			display: none; /* Aparece via JS no mobile */
+			touch-action: none;
+		}
+		#joystick-knob {
+			position: absolute;
+			top: 35px;
+			left: 35px;
+			width: 50px;
+			height: 50px;
+			background: #ff69b4;
+			border-radius: 50%;
+		}
+
+		#win-screen {
+			display: none;
+			position: fixed;
+			top: 0; left: 0; width: 100%; height: 100%;
+			background: linear-gradient(135deg, #fff0f5 0%, #ffe4e1 100%);
+			color: #ff1493;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			z-index: 100;
+			text-align: center;
+		}
+
+		.btn { margin-top: 20px; padding: 12px 25px; background: #ff69b4; color: white; border: none; border-radius: 25px; cursor: pointer; }
+	</style>
+</head>
+<body>
+
+	<div id="ui">
+		<h1>🌸 O Jardim Secreto 🌸</h1>
+		<p>Toque para entrar no mundo</p>
+	</div>
+
+	<div id="joystick-container">
+		<div id="joystick-knob"></div>
+	</div>
+
+	<div id="win-screen">
+		<h1>ANA, EU TE AMO! ❤️</h1>
+		<p>Você encontrou o final da nossa missão.</p>
+		<button class="btn" onclick="location.reload()">Recomeçar</button>
+	</div>
+
+	<script type="importmap">
+		{
+			"imports": {
+				"three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+				"three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+			}
+		}
+	</script>
+
+	<script type="module">
+		import * as THREE from 'three';
+		import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
+
+		const scene = new THREE.Scene();
+		scene.background = new THREE.Color(0x87CEEB);
+		scene.fog = new THREE.Fog(0x87CEEB, 10, 100);
+
+		const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+		const renderer = new THREE.WebGLRenderer({ antialias: true });
+		renderer.setSize(window.innerWidth, window.innerHeight);
+		document.body.appendChild(renderer.domElement);
+
+		// Luzes
+		scene.add(new THREE.AmbientLight(0xffffff, 1.2));
+		const sun = new THREE.DirectionalLight(0xfff5e1, 1.5);
+		sun.position.set(50, 100, 50);
+		scene.add(sun);
+
+		// Chão
+		const floor = new THREE.Mesh(new THREE.PlaneGeometry(1000, 1000), new THREE.MeshPhongMaterial({ color: 0x7cfc00 }));
+		floor.rotation.x = -Math.PI / 2;
+		scene.add(floor);
+
+		// Árvores
+		const treeCount = 800;
+		const trunks = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.15, 0.25, 2), new THREE.MeshPhongMaterial({ color: 0x8b4513 }), treeCount);
+		const leaves = new THREE.InstancedMesh(new THREE.SphereGeometry(1.5, 8, 8), new THREE.MeshPhongMaterial({ color: 0x32cd32 }), treeCount);
+		const dummy = new THREE.Object3D();
+		for (let i = 0; i < treeCount; i++) {
+			const x = (Math.random() - 0.5) * 300;
+			const z = (Math.random() - 0.5) * 300;
+			if (Math.sqrt(x*x + z*z) < 15) continue;
+			dummy.position.set(x, 1, z); dummy.updateMatrix(); trunks.setMatrixAt(i, dummy.matrix);
+			dummy.position.set(x, 3, z); dummy.updateMatrix(); leaves.setMatrixAt(i, dummy.matrix);
+		}
+		scene.add(trunks, leaves);
+
+		// Alvo
+		const targetPos = { x: 0, z: -60 };
+		const canvas = document.createElement('canvas');
+		const ctx = canvas.getContext('2d');
+		canvas.width = 512; canvas.height = 128;
+		ctx.fillStyle = '#ff1493'; ctx.font = 'bold 50px Arial'; ctx.textAlign = 'center';
+		ctx.fillText('ANA, EU TE AMO! ❤️', 256, 64);
+		const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(canvas) }));
+		sprite.scale.set(10, 2.5, 1);
+		sprite.position.set(targetPos.x, 3, targetPos.z);
+		scene.add(sprite);
+
+		// --- LÓGICA DE CONTROLE ---
+		const controls = new PointerLockControls(camera, document.body);
+		const isMobile = /Android|iPhone/i.test(navigator.userAgent);
+		if(isMobile) document.getElementById('joystick-container').style.display = 'block';
+
+		document.getElementById('ui').addEventListener('click', () => {
+			if(!isMobile) controls.lock();
+			document.getElementById('ui').style.display = 'none';
+		});
+
+		// Movimento Keyboard
+		let keys = { w: false, s: false, a: false, d: false };
+		document.addEventListener('keydown', (e) => { if(keys.hasOwnProperty(e.key.toLowerCase())) keys[e.key.toLowerCase()] = true; });
+		document.addEventListener('keyup', (e) => { if(keys.hasOwnProperty(e.key.toLowerCase())) keys[e.key.toLowerCase()] = false; });
+
+		// Movimento Joystick (Mobile)
+		let joyX = 0, joyY = 0;
+		const knob = document.getElementById('joystick-knob');
+		const joyContainer = document.getElementById('joystick-container');
+		
+		joyContainer.addEventListener('touchmove', (e) => {
+			const touch = e.touches[0];
+			const rect = joyContainer.getBoundingClientRect();
+			const centerX = rect.left + rect.width/2;
+			const centerY = rect.top + rect.height/2;
+			joyX = (touch.clientX - centerX) / (rect.width/2);
+			joyY = (touch.clientY - centerY) / (rect.height/2);
+			const dist = Math.min(1, Math.sqrt(joyX*joyX + joyY*joyY));
+			const angle = Math.atan2(joyY, joyX);
+			joyX = Math.cos(angle) * dist;
+			joyY = Math.sin(angle) * dist;
+			knob.style.transform = `translate(${joyX * 40}px, ${joyY * 40}px)`;
+		});
+		joyContainer.addEventListener('touchend', () => {
+			joyX = 0; joyY = 0; knob.style.transform = `translate(0,0)`;
+		});
+
+		// Rotação Mobile (Lado direito da tela)
+		let lastTouchX = 0;
+		document.addEventListener('touchstart', (e) => { lastTouchX = e.touches[0].clientX; });
+		document.addEventListener('touchmove', (e) => {
+			if (e.target.id === 'joystick-container' || e.target.id === 'joystick-knob') return;
+			const touchX = e.touches[0].clientX;
+			const deltaX = touchX - lastTouchX;
+			camera.rotation.y -= deltaX * 0.005;
+			lastTouchX = touchX;
+		});
+
+		const clock = new THREE.Clock();
+		function animate() {
+			requestAnimationFrame(animate);
+			const delta = clock.getDelta();
+			const speed = 25 * delta;
+
+			// Movimento PC
+			if (controls.isLocked) {
+				if (keys.w) controls.moveForward(speed);
+				if (keys.s) controls.moveForward(-speed);
+				if (keys.a) controls.moveRight(-speed);
+				if (keys.d) controls.moveRight(speed);
+			}
+
+			// Movimento Mobile
+			if (isMobile) {
+				camera.translateZ(joyY * speed);
+				camera.translateX(joyX * speed);
+				camera.position.y = 1.6; // Trava altura
+			}
+
+			// Vitória
+			if (camera.position.distanceTo(new THREE.Vector3(targetPos.x, 1.6, targetPos.z)) < 5) {
+				document.getElementById('win-screen').style.display = 'flex';
+				if(!isMobile) controls.unlock();
+			}
+
+			renderer.render(scene, camera);
+		}
+		camera.position.set(0, 1.6, 5);
+		animate();
+	</script>
+</body>
+</html>
