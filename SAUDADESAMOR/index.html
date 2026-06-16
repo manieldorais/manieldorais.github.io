@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<title>Para Ana ❤️</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+			font-family: sans-serif;
+		}
+		body {
+			background: #000;
+			overflow: hidden;
+			color: white;
+		}
+		
+		/* Tela Inicial para liberar áudio */
+		#startScreen {
+			position: absolute;
+			top: 0; left: 0; width: 100%; height: 100%;
+			background: #ff4d6d;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			z-index: 100;
+			cursor: pointer;
+		}
+		#startScreen h1 {
+			font-size: 24px;
+			text-align: center;
+			padding: 20px;
+		}
+
+		/* Container dos Stories */
+		#storyContainer {
+			position: relative;
+			width: 100vw;
+			height: 100vh;
+			display: none;
+		}
+		
+		/* Imagem de Fundo */
+		.story-bg {
+			position: absolute;
+			top: 0; left: 0; width: 100%; height: 100%;
+			background-size: cover;
+			background-position: center;
+			opacity: 0;
+		}
+
+		/* Efeitos de Transição */
+		.effect-fade {
+			animation: fadeIn 0.8s forwards;
+		}
+		.effect-zoom {
+			animation: zoomIn 1s forwards;
+		}
+		.effect-slide {
+			animation: slideUp 0.8s forwards;
+		}
+
+		@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+		@keyframes zoomIn { from { opacity: 0; transform: scale(1.2); } to { opacity: 1; transform: scale(1); } }
+		@keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+		/* Texto Romântico */
+		.story-text {
+			position: absolute;
+			bottom: 15%;
+			left: 10%;
+			right: 10%;
+			text-align: center;
+			font-size: 28px;
+			font-weight: bold;
+			text-shadow: 2px 2px 10px rgba(0,0,0,0.8);
+			z-index: 10;
+		}
+
+		/* Barras de Progresso */
+		.progress-container {
+			position: absolute;
+			top: 10px;
+			left: 10px;
+			right: 10px;
+			display: flex;
+			gap: 5px;
+			z-index: 20;
+		}
+		.progress-bar {
+			flex: 1;
+			height: 3px;
+			background: rgba(255, 255, 255, 0.3);
+			border-radius: 3px;
+			overflow: hidden;
+		}
+		.progress-fill {
+			height: 100%;
+			width: 0%;
+			background: white;
+		}
+
+		/* Áreas de Toque */
+		.touch-left {
+			position: absolute; top: 0; left: 0; width: 40%; height: 100%; z-index: 30;
+		}
+		.touch-right {
+			position: absolute; top: 0; right: 0; width: 60%; height: 100%; z-index: 30;
+		}
+	</style>
+</head>
+<body>
+
+	<div id="startScreen" onclick="startApp()">
+		<h1>Tocar para abrir a surpresa ❤️</h1>
+	</div>
+
+	<!-- Adicione sua música aqui -->
+	<audio id="bgMusic" loop>
+		<source src="musica.mp3" type="audio/mpeg">
+	</audio>
+
+	<div id="storyContainer">
+		<div class="progress-container" id="progressContainer"></div>
+		
+		<div id="slideImage" class="story-bg"></div>
+		<div id="slideText" class="story-text"></div>
+
+		<div class="touch-left" onclick="prevSlide()"></div>
+		<div class="touch-right" onclick="nextSlide()"></div>
+	</div>
+
+	<script>
+		// --- CONFIGURAÇÃO DOS STORIES ---
+		const stories = [
+			{
+				img: "1.jpg", 
+				texto: "Você é a melhor parte do meu dia 💖",
+				duracao: 5000, // 5 segundos
+				efeito: "effect-fade"
+			},
+			{
+				img: "2.jpg", 
+				texto: "", // Deixe vazio se não quiser texto
+				duracao: 4000,
+				efeito: "effect-zoom"
+			},
+			{
+				img: "3.jpg", 
+				texto: "Vem dormir comigo no frio...",
+				duracao: 5000,
+				efeito: "effect-slide"
+			},
+			{
+				img: "4.jpg", 
+				texto: "Eu te amo demais!",
+				duracao: 6000,
+				efeito: "effect-fade"
+			},
+			{
+				img: "5.jpg", 
+				texto: "Eu amo sua companhia!",
+				duracao: 6000,
+				efeito: "effect-fade"
+			},
+			{
+				img: "6.jpg", 
+				texto: "Tudo com você é mais legal!",
+				duracao: 6000,
+				efeito: "effect-fade"
+			},
+			{
+				img: "7.jpg", 
+				texto: "EU TE AMOO!",
+				duracao: 6000,
+				efeito: "effect-fade"
+			}
+		];
+
+		let currentIndex = 0;
+		let timer;
+		let startTime;
+		let animationFrame;
+
+		function startApp() {
+			document.getElementById('startScreen').style.display = 'none';
+			document.getElementById('storyContainer').style.display = 'block';
+			
+			// Inicia a música
+			const music = document.getElementById('bgMusic');
+			music.volume = 0.5;
+			music.play().catch(e => console.log("Áudio bloqueado:", e));
+			
+			setupProgressBars();
+			showSlide(0);
+		}
+
+		function setupProgressBars() {
+			const container = document.getElementById('progressContainer');
+			container.innerHTML = '';
+			stories.forEach(() => {
+				const bar = document.createElement('div');
+				bar.className = 'progress-bar';
+				bar.innerHTML = '<div class="progress-fill"></div>';
+				container.appendChild(bar);
+			});
+		}
+
+		function showSlide(index) {
+			if (index < 0) index = 0;
+			if (index >= stories.length) {
+				index = stories.length - 1; // Para no último ou adicione lógica de reiniciar
+			}
+			currentIndex = index;
+
+			const story = stories[currentIndex];
+			const slideImg = document.getElementById('slideImage');
+			const slideTxt = document.getElementById('slideText');
+
+			// Troca a imagem e o texto
+			slideImg.style.backgroundImage = `url('${story.img}')`;
+			slideTxt.innerHTML = story.texto;
+
+			// Reseta a animação
+			slideImg.className = 'story-bg';
+			void slideImg.offsetWidth; // Reflow
+			slideImg.classList.add(story.efeito);
+
+			updateProgressBars();
+			startTimer(story.duracao);
+		}
+
+		function startTimer(duration) {
+			clearTimeout(timer);
+			cancelAnimationFrame(animationFrame);
+			startTime = Date.now();
+
+			function updateBar() {
+				const elapsed = Date.now() - startTime;
+				const percent = Math.min((elapsed / duration) * 100, 100);
+				
+				const fills = document.querySelectorAll('.progress-fill');
+				if(fills[currentIndex]) {
+					fills[currentIndex].style.width = percent + '%';
+				}
+
+				if (percent < 100) {
+					animationFrame = requestAnimationFrame(updateBar);
+				}
+			}
+			
+			animationFrame = requestAnimationFrame(updateBar);
+			timer = setTimeout(nextSlide, duration);
+		}
+
+		function updateProgressBars() {
+			const fills = document.querySelectorAll('.progress-fill');
+			fills.forEach((fill, i) => {
+				if (i < currentIndex) fill.style.width = '100%';
+				else if (i > currentIndex) fill.style.width = '0%';
+			});
+		}
+
+		function nextSlide() {
+			if (currentIndex < stories.length - 1) {
+				showSlide(currentIndex + 1);
+			} else {
+				// Fim dos stories (reinicia)
+				showSlide(0);
+			}
+		}
+
+		function prevSlide() {
+			if (currentIndex > 0) {
+				showSlide(currentIndex - 1);
+			}
+		}
+	</script>
+</body>
+</html>
